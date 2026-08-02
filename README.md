@@ -145,9 +145,8 @@ Each notebook should be numbered in the order it's meant to run (`01_`, `02_`, .
 
 ## 6. Git Workflow (see `CONTRIBUTING.md` for full detail)
 
-- - Branches are optional for this project. Shared work may be committed directly to `main` as long as collaborators coordinate changes.
+- Branches are optional for this project. Shared work may be committed directly to `main` as long as collaborators coordinate changes.
 - **Strip notebook outputs before committing.** Set up `nbstripout` once (`nbstripout --install`) and this happens automatically — this alone prevents most notebook merge conflicts.
-- Since it's just the two of you, informal is fine — but if you touch `src/doda/` (shared code) or the other person's `notebooks/` folder, mention it so nothing gets silently overwritten.
 - One meaningful change per commit; commit message states _what_ and _why_ in one line.
 - Update `CHANGELOG.md` for anything that would change a result (bug fix, weight change, new dataset, new selector) — not for typo fixes.
 
