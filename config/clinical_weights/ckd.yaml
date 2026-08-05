@@ -1,0 +1,31 @@
+# Clinical weight dictionary — Chronic Kidney Disease (UCI CKD)
+#
+# STATUS: DRAFT — placeholder weights below reflect general nephrology relevance
+# (serum creatinine, hemoglobin, and specific gravity are core CKD diagnostic
+# markers) but need a cited source (e.g. KDIGO guideline) before use in a
+# reported result.
+
+age: 0.5
+bp: 0.6              # blood pressure
+sg: 0.9              # specific gravity
+al: 0.9              # albumin
+su: 0.6              # sugar
+rbc: 0.6             # red blood cells
+pc: 0.6              # pus cell
+pcc: 0.5             # pus cell clumps
+ba: 0.4              # bacteria
+bgr: 0.5             # blood glucose random
+bu: 0.8              # blood urea
+sc: 1.0              # serum creatinine — primary CKD diagnostic marker
+sod: 0.5             # sodium
+pot: 0.5             # potassium
+hemo: 0.9            # hemoglobin — CKD-associated anemia marker
+pcv: 0.7             # packed cell volume
+wc: 0.3              # white blood cell count
+rc: 0.5              # red blood cell count
+htn: 0.8             # hypertension (comorbidity)
+dm: 0.8              # diabetes mellitus (comorbidity)
+cad: 0.6             # coronary artery disease (comorbidity)
+appet: 0.3           # appetite
+pe: 0.4              # pedal edema
+ane: 0.5             # anemia

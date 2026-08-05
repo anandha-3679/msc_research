@@ -1,0 +1,33 @@
+# Clinical weight dictionary — Diabetes (CDC Diabetes Health Indicators / BRFSS 2015)
+#
+# This REPLACES the two inconsistent in-code dictionaries from the original prototype
+# notebook (ClinicalKnowledgeBroker class weight=1.0 for Stroke, vs. the later
+# "# Clinical correction" override weight=2.5 for Stroke). This file is now the
+# single source of truth — do not redefine weights in code.
+#
+# STATUS: DRAFT — the Stroke weight in particular needs a real clinical source
+# before this is used in any reported result (see docs/known_issues.md, item 1).
+# All 21 features from the dataset are listed explicitly — see
+# tests/test_clinical_broker.py for the completeness check.
+
+HighBP: 1.0
+HighChol: 0.9
+CholCheck: 0.4
+BMI: 1.0
+Smoker: 0.6
+Stroke: 1.0                 # DRAFT — was manually overridden to 2.5 in the prototype; needs justification
+HeartDiseaseorAttack: 0.9
+PhysActivity: 0.5
+Fruits: 0.3
+Veggies: 0.3
+HvyAlcoholConsump: 0.2
+AnyHealthcare: 0.2
+NoDocbcCost: 0.3
+GenHlth: 1.0
+MentHlth: 0.5
+PhysHlth: 0.8
+DiffWalk: 0.9
+Sex: 0.5
+Age: 0.9
+Education: 0.3
+Income: 0.3

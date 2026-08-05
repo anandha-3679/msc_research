@@ -1,0 +1,20 @@
+# Clinical weight dictionary — Heart Disease (UCI Cleveland / combined)
+#
+# STATUS: DRAFT — placeholder weights below reflect general cardiology relevance
+# (e.g. cp, thal, ca, oldpeak are established angiographic/ischemia indicators)
+# but need a cited source (e.g. ACC/AHA guideline, or the original UCI study
+# authors' own feature rationale) before use in a reported result.
+
+age: 0.7
+sex: 0.5
+cp: 1.0            # chest pain type — primary presenting symptom category
+trestbps: 0.6       # resting blood pressure
+chol: 0.6           # serum cholesterol
+fbs: 0.4            # fasting blood sugar > 120 mg/dl
+restecg: 0.5        # resting ECG results
+thalach: 0.8        # maximum heart rate achieved
+exang: 0.8           # exercise-induced angina
+oldpeak: 0.9         # ST depression induced by exercise
+slope: 0.6           # slope of peak exercise ST segment
+ca: 1.0              # number of major vessels colored by fluoroscopy — direct angiographic finding
+thal: 1.0            # thalassemia / perfusion defect result — direct diagnostic finding
