@@ -1,0 +1,28 @@
+{
+
+                "HighBP": 1.0,
+                "HighChol": 0.9,
+                "BMI": 1.0,
+                "GenHlth": 1.0,
+                "PhysHlth": 0.8,
+                "MentHlth": 0.5,
+                "Age": 0.9,
+                "HeartDiseaseorAttack": 1.0,
+                "Stroke": 1.0,
+                "DiffWalk": 0.9,
+                "Smoker": 0.6,
+                "Income": 0.3,
+                "Education": 0.3,
+                "Sex": 0.2,
+                "Fruits": 0.2,
+                "Veggies": 0.2,
+                "HvyAlcoholConsump": 0.2,
+                "AnyHealthcare": 0.2,
+                "NoDocbcCost": 0.2,
+                "CholCheck": 0.4,
+                "PhysActivity": 0.4
+
+            }
+
+
+ 
