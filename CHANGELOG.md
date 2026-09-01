@@ -15,6 +15,8 @@ Format per entry: `YYYY-MM-DD — who — what changed and why`.
 - 2026-08-13 — anandha — Fixed the MRMR selector integration to ensure that MRMR feature scores are correctly aligned with the training feature matrix before being passed into the DODA scoring pipeline. This resolves an index-alignment issue encountered during MRMR score computation and prevents mismatched feature/target indices from producing `Unalignable boolean Series` errors. This can affect MRMR rankings and all downstream MRMR + DODA results.
 
 - 2026-08-13 — anandha — Standardized the MRMR experimental pipeline to operate on the scaled training feature matrix, matching the preprocessing used by the other feature-selection experiments. This was done to maintain methodological consistency across ANOVA, LASSO, Random Forest, and MRMR experiments.
+
+- 2026-09-01 - anandha -  added rank fusion in doda, a differnt fusion method to experiment
 ---
 
 ### Template for future entries
