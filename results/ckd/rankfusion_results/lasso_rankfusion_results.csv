@@ -1,0 +1,13 @@
+Method,Top-K,Model,Selected Features,Accuracy,Precision,Recall,F1 Score,ROC-AUC
+LASSO + Rank Fusion,5,Logistic Regression,"al, htn, dm, hemo, rbc",0.9375,1.0,0.9,0.9473684210526315,0.9876666666666666
+LASSO + Rank Fusion,5,Random Forest,"al, htn, dm, hemo, rbc",0.9625,0.9795918367346939,0.96,0.9696969696969697,0.9883333333333334
+LASSO + Rank Fusion,5,XGBoost,"al, htn, dm, hemo, rbc",0.9625,0.9795918367346939,0.96,0.9696969696969697,0.9966666666666667
+LASSO + Rank Fusion,10,Logistic Regression,"al, htn, dm, hemo, rbc, bp, pcv, age, sg, sc",0.975,1.0,0.96,0.9795918367346939,0.9986666666666667
+LASSO + Rank Fusion,10,Random Forest,"al, htn, dm, hemo, rbc, bp, pcv, age, sg, sc",1.0,1.0,1.0,1.0,1.0
+LASSO + Rank Fusion,10,XGBoost,"al, htn, dm, hemo, rbc, bp, pcv, age, sg, sc",1.0,1.0,1.0,1.0,1.0
+LASSO + Rank Fusion,15,Logistic Regression,"al, htn, dm, hemo, rbc, bp, pcv, age, sg, sc, bu, rc, bgr, pot, su",0.975,1.0,0.96,0.9795918367346939,0.9986666666666667
+LASSO + Rank Fusion,15,Random Forest,"al, htn, dm, hemo, rbc, bp, pcv, age, sg, sc, bu, rc, bgr, pot, su",1.0,1.0,1.0,1.0,1.0
+LASSO + Rank Fusion,15,XGBoost,"al, htn, dm, hemo, rbc, bp, pcv, age, sg, sc, bu, rc, bgr, pot, su",1.0,1.0,1.0,1.0,1.0
+LASSO + Rank Fusion,20,Logistic Regression,"al, htn, dm, hemo, rbc, bp, pcv, age, sg, sc, bu, rc, bgr, pot, su, appet, sod, pc, pcc, cad",0.975,1.0,0.96,0.9795918367346939,1.0
+LASSO + Rank Fusion,20,Random Forest,"al, htn, dm, hemo, rbc, bp, pcv, age, sg, sc, bu, rc, bgr, pot, su, appet, sod, pc, pcc, cad",1.0,1.0,1.0,1.0,1.0
+LASSO + Rank Fusion,20,XGBoost,"al, htn, dm, hemo, rbc, bp, pcv, age, sg, sc, bu, rc, bgr, pot, su, appet, sod, pc, pcc, cad",1.0,1.0,1.0,1.0,1.0
