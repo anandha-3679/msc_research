@@ -1,0 +1,25 @@
+Top_K,Model,Method,ROC-AUC (Mean ± SD)
+5,Logistic Regression,ANOVA,0.8941 ± 0.0294
+5,Logistic Regression,DODA,0.8954 ± 0.0290
+8,Logistic Regression,ANOVA,0.9107 ± 0.0247
+8,Logistic Regression,DODA,0.9004 ± 0.0259
+10,Logistic Regression,ANOVA,0.9099 ± 0.0221
+10,Logistic Regression,DODA,0.9099 ± 0.0232
+13,Logistic Regression,ANOVA,0.9116 ± 0.0199
+13,Logistic Regression,DODA,0.9116 ± 0.0199
+5,Random Forest,ANOVA,0.8671 ± 0.0398
+5,Random Forest,DODA,0.8707 ± 0.0367
+8,Random Forest,ANOVA,0.9001 ± 0.0219
+8,Random Forest,DODA,0.9040 ± 0.0204
+10,Random Forest,ANOVA,0.9100 ± 0.0214
+10,Random Forest,DODA,0.9085 ± 0.0271
+13,Random Forest,ANOVA,0.9104 ± 0.0259
+13,Random Forest,DODA,0.9064 ± 0.0275
+5,XGBoost,ANOVA,0.8634 ± 0.0416
+5,XGBoost,DODA,0.8723 ± 0.0289
+8,XGBoost,ANOVA,0.8881 ± 0.0307
+8,XGBoost,DODA,0.8809 ± 0.0200
+10,XGBoost,ANOVA,0.8931 ± 0.0199
+10,XGBoost,DODA,0.8902 ± 0.0211
+13,XGBoost,ANOVA,0.8918 ± 0.0192
+13,XGBoost,DODA,0.8964 ± 0.0198
