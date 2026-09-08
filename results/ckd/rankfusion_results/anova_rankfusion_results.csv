@@ -1,0 +1,13 @@
+Method,Top-K,Model,Selected Features,Accuracy,Precision,Recall,F1 Score,ROC-AUC
+ANOVA + Rank Fusion,5,Logistic Regression,"al, htn, hemo, dm, pcv",0.9375,0.9787234042553191,0.92,0.9484536082474226,0.979
+ANOVA + Rank Fusion,5,Random Forest,"al, htn, hemo, dm, pcv",0.9625,0.9795918367346939,0.96,0.9696969696969697,0.9846666666666666
+ANOVA + Rank Fusion,5,XGBoost,"al, htn, hemo, dm, pcv",0.95,0.9791666666666666,0.94,0.9591836734693877,0.9856666666666666
+ANOVA + Rank Fusion,10,Logistic Regression,"al, htn, hemo, dm, pcv, bu, sc, sg, bp, rbc",0.975,1.0,0.96,0.9795918367346939,0.9986666666666667
+ANOVA + Rank Fusion,10,Random Forest,"al, htn, hemo, dm, pcv, bu, sc, sg, bp, rbc",0.9875,1.0,0.98,0.98989898989899,1.0
+ANOVA + Rank Fusion,10,XGBoost,"al, htn, hemo, dm, pcv, bu, sc, sg, bp, rbc",0.9875,0.9803921568627451,1.0,0.9900990099009901,1.0
+ANOVA + Rank Fusion,15,Logistic Regression,"al, htn, hemo, dm, pcv, bu, sc, sg, bp, rbc, rc, bgr, sod, pe, pc",0.9875,1.0,0.98,0.98989898989899,1.0
+ANOVA + Rank Fusion,15,Random Forest,"al, htn, hemo, dm, pcv, bu, sc, sg, bp, rbc, rc, bgr, sod, pe, pc",1.0,1.0,1.0,1.0,1.0
+ANOVA + Rank Fusion,15,XGBoost,"al, htn, hemo, dm, pcv, bu, sc, sg, bp, rbc, rc, bgr, sod, pe, pc",1.0,1.0,1.0,1.0,1.0
+ANOVA + Rank Fusion,20,Logistic Regression,"al, htn, hemo, dm, pcv, bu, sc, sg, bp, rbc, rc, bgr, sod, pe, pc, ane, appet, age, pot, cad",0.975,1.0,0.96,0.9795918367346939,1.0
+ANOVA + Rank Fusion,20,Random Forest,"al, htn, hemo, dm, pcv, bu, sc, sg, bp, rbc, rc, bgr, sod, pe, pc, ane, appet, age, pot, cad",1.0,1.0,1.0,1.0,1.0
+ANOVA + Rank Fusion,20,XGBoost,"al, htn, hemo, dm, pcv, bu, sc, sg, bp, rbc, rc, bgr, sod, pe, pc, ane, appet, age, pot, cad",1.0,1.0,1.0,1.0,1.0

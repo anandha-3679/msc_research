@@ -1,0 +1,13 @@
+Method,Top-K,Model,Selected Features,Accuracy,Precision,Recall,F1 Score,ROC-AUC
+ANOVA,5,Logistic Regression,"hemo, pcv, sg, rc, htn",0.95,0.9791666666666666,0.94,0.9591836734693877,0.9859999999999999
+ANOVA,5,Random Forest,"hemo, pcv, sg, rc, htn",0.9875,0.9803921568627451,1.0,0.9900990099009901,0.9986666666666667
+ANOVA,5,XGBoost,"hemo, pcv, sg, rc, htn",0.9875,0.9803921568627451,1.0,0.9900990099009901,0.9983333333333334
+ANOVA,10,Logistic Regression,"hemo, pcv, sg, rc, htn, dm, al, pc, appet, bu",0.975,1.0,0.96,0.9795918367346939,1.0
+ANOVA,10,Random Forest,"hemo, pcv, sg, rc, htn, dm, al, pc, appet, bu",0.9875,1.0,0.98,0.98989898989899,1.0
+ANOVA,10,XGBoost,"hemo, pcv, sg, rc, htn, dm, al, pc, appet, bu",1.0,1.0,1.0,1.0,1.0
+ANOVA,15,Logistic Regression,"hemo, pcv, sg, rc, htn, dm, al, pc, appet, bu, pe, bgr, ane, sod, bp",0.975,1.0,0.96,0.9795918367346939,1.0
+ANOVA,15,Random Forest,"hemo, pcv, sg, rc, htn, dm, al, pc, appet, bu, pe, bgr, ane, sod, bp",1.0,1.0,1.0,1.0,1.0
+ANOVA,15,XGBoost,"hemo, pcv, sg, rc, htn, dm, al, pc, appet, bu, pe, bgr, ane, sod, bp",0.9875,1.0,0.98,0.98989898989899,1.0
+ANOVA,20,Logistic Regression,"hemo, pcv, sg, rc, htn, dm, al, pc, appet, bu, pe, bgr, ane, sod, bp, pcc, sc, rbc, su, cad",0.975,1.0,0.96,0.9795918367346939,0.9993333333333333
+ANOVA,20,Random Forest,"hemo, pcv, sg, rc, htn, dm, al, pc, appet, bu, pe, bgr, ane, sod, bp, pcc, sc, rbc, su, cad",1.0,1.0,1.0,1.0,1.0
+ANOVA,20,XGBoost,"hemo, pcv, sg, rc, htn, dm, al, pc, appet, bu, pe, bgr, ane, sod, bp, pcc, sc, rbc, su, cad",1.0,1.0,1.0,1.0,1.0
