@@ -1,0 +1,9 @@
+Top_K,Method,"Primary (imputed, n=400)","Sensitivity (complete-case, n=158)"
+5,DODA,1.0,0.8133
+5,LASSO,1.0,0.8844
+10,DODA,0.9855,0.9394
+10,LASSO,0.9394,1.0
+15,DODA,1.0,1.0
+15,LASSO,1.0,1.0
+20,DODA,1.0,0.9924
+20,LASSO,1.0,1.0
