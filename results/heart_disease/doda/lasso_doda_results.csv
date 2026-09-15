@@ -1,0 +1,13 @@
+Method,Top-K,Model,Selected Features,Accuracy,Precision,Recall,F1 Score,ROC-AUC
+LASSO + Rank Fusion DODA,5,Logistic Regression,"ca, thal, cp, exang, oldpeak",0.8524590163934426,0.8064516129032258,0.8928571428571429,0.847457627118644,0.9404761904761906
+LASSO + Rank Fusion DODA,5,Random Forest,"ca, thal, cp, exang, oldpeak",0.7213114754098361,0.6666666666666666,0.7857142857142857,0.7213114754098361,0.8798701298701299
+LASSO + Rank Fusion DODA,5,XGBoost,"ca, thal, cp, exang, oldpeak",0.7868852459016393,0.7586206896551724,0.7857142857142857,0.7719298245614035,0.8793290043290043
+LASSO + Rank Fusion DODA,8,Logistic Regression,"ca, thal, cp, exang, oldpeak, slope, thalach, sex",0.8524590163934426,0.8064516129032258,0.8928571428571429,0.847457627118644,0.9350649350649352
+LASSO + Rank Fusion DODA,8,Random Forest,"ca, thal, cp, exang, oldpeak, slope, thalach, sex",0.8360655737704918,0.7647058823529411,0.9285714285714286,0.8387096774193549,0.9388528138528138
+LASSO + Rank Fusion DODA,8,XGBoost,"ca, thal, cp, exang, oldpeak, slope, thalach, sex",0.8524590163934426,0.8275862068965517,0.8571428571428571,0.8421052631578947,0.9253246753246753
+LASSO + Rank Fusion DODA,10,Logistic Regression,"ca, thal, cp, exang, oldpeak, slope, thalach, sex, age, trestbps",0.8688524590163934,0.8125,0.9285714285714286,0.8666666666666667,0.9448051948051949
+LASSO + Rank Fusion DODA,10,Random Forest,"ca, thal, cp, exang, oldpeak, slope, thalach, sex, age, trestbps",0.8688524590163934,0.8125,0.9285714285714286,0.8666666666666667,0.948051948051948
+LASSO + Rank Fusion DODA,10,XGBoost,"ca, thal, cp, exang, oldpeak, slope, thalach, sex, age, trestbps",0.8524590163934426,0.7714285714285715,0.9642857142857143,0.8571428571428571,0.9415584415584415
+LASSO + Rank Fusion DODA,13,Logistic Regression,"ca, thal, cp, exang, oldpeak, slope, thalach, sex, age, trestbps, restecg, chol, fbs",0.8688524590163934,0.8125,0.9285714285714286,0.8666666666666667,0.9512987012987013
+LASSO + Rank Fusion DODA,13,Random Forest,"ca, thal, cp, exang, oldpeak, slope, thalach, sex, age, trestbps, restecg, chol, fbs",0.8852459016393442,0.8181818181818182,0.9642857142857143,0.8852459016393442,0.9518398268398268
+LASSO + Rank Fusion DODA,13,XGBoost,"ca, thal, cp, exang, oldpeak, slope, thalach, sex, age, trestbps, restecg, chol, fbs",0.8688524590163934,0.8125,0.9285714285714286,0.8666666666666667,0.9101731601731601
