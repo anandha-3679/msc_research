@@ -1,0 +1,13 @@
+Method,Top-K,Model,Selected Features,Accuracy,Precision,Recall,F1 Score,ROC-AUC
+Boruta + Rank Fusion DODA,5,Logistic Regression,"cp, oldpeak, ca, thal, age",0.8524590163934426,0.7878787878787878,0.9285714285714286,0.8524590163934426,0.9258658008658008
+Boruta + Rank Fusion DODA,5,Random Forest,"cp, oldpeak, ca, thal, age",0.7868852459016393,0.7142857142857143,0.8928571428571429,0.7936507936507936,0.9334415584415584
+Boruta + Rank Fusion DODA,5,XGBoost,"cp, oldpeak, ca, thal, age",0.8360655737704918,0.7647058823529411,0.9285714285714286,0.8387096774193549,0.9312770562770563
+Boruta + Rank Fusion DODA,8,Logistic Regression,"cp, oldpeak, ca, thal, age, thalach, exang, chol",0.8688524590163934,0.8333333333333334,0.8928571428571429,0.8620689655172413,0.9361471861471862
+Boruta + Rank Fusion DODA,8,Random Forest,"cp, oldpeak, ca, thal, age, thalach, exang, chol",0.8688524590163934,0.8333333333333334,0.8928571428571429,0.8620689655172413,0.9442640692640691
+Boruta + Rank Fusion DODA,8,XGBoost,"cp, oldpeak, ca, thal, age, thalach, exang, chol",0.819672131147541,0.7741935483870968,0.8571428571428571,0.8135593220338984,0.895021645021645
+Boruta + Rank Fusion DODA,10,Logistic Regression,"cp, oldpeak, ca, thal, age, thalach, exang, chol, trestbps, slope",0.8688524590163934,0.8125,0.9285714285714286,0.8666666666666667,0.948051948051948
+Boruta + Rank Fusion DODA,10,Random Forest,"cp, oldpeak, ca, thal, age, thalach, exang, chol, trestbps, slope",0.9180327868852459,0.8709677419354839,0.9642857142857143,0.9152542372881356,0.9550865800865801
+Boruta + Rank Fusion DODA,10,XGBoost,"cp, oldpeak, ca, thal, age, thalach, exang, chol, trestbps, slope",0.8360655737704918,0.78125,0.8928571428571429,0.8333333333333334,0.9101731601731602
+Boruta + Rank Fusion DODA,13,Logistic Regression,"cp, oldpeak, ca, thal, age, thalach, exang, chol, trestbps, slope, restecg, sex, fbs",0.8688524590163934,0.8125,0.9285714285714286,0.8666666666666667,0.9512987012987013
+Boruta + Rank Fusion DODA,13,Random Forest,"cp, oldpeak, ca, thal, age, thalach, exang, chol, trestbps, slope, restecg, sex, fbs",0.9016393442622951,0.8666666666666667,0.9285714285714286,0.896551724137931,0.9512987012987013
+Boruta + Rank Fusion DODA,13,XGBoost,"cp, oldpeak, ca, thal, age, thalach, exang, chol, trestbps, slope, restecg, sex, fbs",0.8688524590163934,0.8125,0.9285714285714286,0.8666666666666667,0.9101731601731602

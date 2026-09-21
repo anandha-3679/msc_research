@@ -1,0 +1,13 @@
+Method,Top-K,Model,Selected Features,Accuracy,Precision,Recall,F1 Score,ROC-AUC
+Random Forest + Rank Fusion DODA,5,Logistic Regression,"thal, cp, ca, thalach, oldpeak",0.8688524590163934,0.8125,0.9285714285714286,0.8666666666666667,0.9339826839826839
+Random Forest + Rank Fusion DODA,5,Random Forest,"thal, cp, ca, thalach, oldpeak",0.819672131147541,0.7931034482758621,0.8214285714285714,0.8070175438596491,0.9172077922077922
+Random Forest + Rank Fusion DODA,5,XGBoost,"thal, cp, ca, thalach, oldpeak",0.7868852459016393,0.7419354838709677,0.8214285714285714,0.7796610169491526,0.8896103896103895
+Random Forest + Rank Fusion DODA,8,Logistic Regression,"thal, cp, ca, thalach, oldpeak, age, exang, trestbps",0.8524590163934426,0.8064516129032258,0.8928571428571429,0.847457627118644,0.9534632034632033
+Random Forest + Rank Fusion DODA,8,Random Forest,"thal, cp, ca, thalach, oldpeak, age, exang, trestbps",0.8524590163934426,0.8064516129032258,0.8928571428571429,0.847457627118644,0.9523809523809523
+Random Forest + Rank Fusion DODA,8,XGBoost,"thal, cp, ca, thalach, oldpeak, age, exang, trestbps",0.7540983606557377,0.6857142857142857,0.8571428571428571,0.7619047619047619,0.9166666666666666
+Random Forest + Rank Fusion DODA,10,Logistic Regression,"thal, cp, ca, thalach, oldpeak, age, exang, trestbps, chol, slope",0.8688524590163934,0.8125,0.9285714285714286,0.8666666666666667,0.948051948051948
+Random Forest + Rank Fusion DODA,10,Random Forest,"thal, cp, ca, thalach, oldpeak, age, exang, trestbps, chol, slope",0.8852459016393442,0.8387096774193549,0.9285714285714286,0.8813559322033898,0.9431818181818181
+Random Forest + Rank Fusion DODA,10,XGBoost,"thal, cp, ca, thalach, oldpeak, age, exang, trestbps, chol, slope",0.8360655737704918,0.78125,0.8928571428571429,0.8333333333333334,0.9166666666666666
+Random Forest + Rank Fusion DODA,13,Logistic Regression,"thal, cp, ca, thalach, oldpeak, age, exang, trestbps, chol, slope, restecg, sex, fbs",0.8688524590163934,0.8125,0.9285714285714286,0.8666666666666667,0.9512987012987013
+Random Forest + Rank Fusion DODA,13,Random Forest,"thal, cp, ca, thalach, oldpeak, age, exang, trestbps, chol, slope, restecg, sex, fbs",0.9016393442622951,0.84375,0.9642857142857143,0.9,0.9594155844155844
+Random Forest + Rank Fusion DODA,13,XGBoost,"thal, cp, ca, thalach, oldpeak, age, exang, trestbps, chol, slope, restecg, sex, fbs",0.8688524590163934,0.8125,0.9285714285714286,0.8666666666666667,0.9101731601731601

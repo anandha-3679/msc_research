@@ -1,0 +1,13 @@
+Method,Top-K,Model,Selected Features,Accuracy,Precision,Recall,F1 Score,ROC-AUC
+Random Forest,5,Logistic Regression,"thal, thalach, cp, ca, age",0.7868852459016393,0.7272727272727273,0.8571428571428571,0.7868852459016393,0.9090909090909091
+Random Forest,5,Random Forest,"thal, thalach, cp, ca, age",0.8360655737704918,0.8,0.8571428571428571,0.8275862068965517,0.9042207792207793
+Random Forest,5,XGBoost,"thal, thalach, cp, ca, age",0.7868852459016393,0.7272727272727273,0.8571428571428571,0.7868852459016393,0.9004329004329005
+Random Forest,8,Logistic Regression,"thal, thalach, cp, ca, age, oldpeak, chol, trestbps",0.8688524590163934,0.8125,0.9285714285714286,0.8666666666666667,0.945887445887446
+Random Forest,8,Random Forest,"thal, thalach, cp, ca, age, oldpeak, chol, trestbps",0.8852459016393442,0.8620689655172413,0.8928571428571429,0.8771929824561403,0.933982683982684
+Random Forest,8,XGBoost,"thal, thalach, cp, ca, age, oldpeak, chol, trestbps",0.819672131147541,0.7931034482758621,0.8214285714285714,0.8070175438596491,0.8961038961038961
+Random Forest,10,Logistic Regression,"thal, thalach, cp, ca, age, oldpeak, chol, trestbps, exang, slope",0.8852459016393442,0.8181818181818182,0.9642857142857143,0.8852459016393442,0.9491341991341992
+Random Forest,10,Random Forest,"thal, thalach, cp, ca, age, oldpeak, chol, trestbps, exang, slope",0.8688524590163934,0.8333333333333334,0.8928571428571429,0.8620689655172413,0.9329004329004329
+Random Forest,10,XGBoost,"thal, thalach, cp, ca, age, oldpeak, chol, trestbps, exang, slope",0.8524590163934426,0.8064516129032258,0.8928571428571429,0.847457627118644,0.8993506493506493
+Random Forest,13,Logistic Regression,"thal, thalach, cp, ca, age, oldpeak, chol, trestbps, exang, slope, sex, restecg, fbs",0.8688524590163934,0.8125,0.9285714285714286,0.8666666666666667,0.9502164502164503
+Random Forest,13,Random Forest,"thal, thalach, cp, ca, age, oldpeak, chol, trestbps, exang, slope, sex, restecg, fbs",0.9016393442622951,0.8666666666666667,0.9285714285714286,0.896551724137931,0.9512987012987013
+Random Forest,13,XGBoost,"thal, thalach, cp, ca, age, oldpeak, chol, trestbps, exang, slope, sex, restecg, fbs",0.8688524590163934,0.8125,0.9285714285714286,0.8666666666666667,0.906926406926407
