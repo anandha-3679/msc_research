@@ -1,0 +1,5 @@
+Top-K,ANOVA Mean Jaccard,DODA Mean Jaccard,Absolute Improvement,Relative Improvement (%)
+5,1.0,1.0,0.0,0.0
+10,0.9715,0.9855,0.0139,1.4348
+15,1.0,1.0,0.0,0.0
+20,1.0,1.0,0.0,0.0
