@@ -1,0 +1,122 @@
+{
+  "schema_version": "1.0",
+  "dataset": "BD-KDD",
+  "target": {
+    "name": "Class",
+    "meaning": {
+      "0": "healthy",
+      "1": "kidney disease"
+    }
+  },
+  "purpose": "Pre-specified clinical-priority weights for the DODA post-selection ranking layer.",
+  "important_note": "These numerical weights are an investigator-defined operationalization of clinical evidence. They are not weights published by KDIGO, WHO, or any cited paper.",
+  "normalization": {
+    "range": [
+      0.0,
+      1.0
+    ],
+    "interpretation": "Higher value = greater clinical priority in the DODA ranking layer."
+  },
+  "tier_mapping": {
+    "A": 1.0,
+    "B": 0.85,
+    "C": 0.7,
+    "D": 0.55,
+    "E": 0.4
+  },
+  "weights": {
+    "Age": 0.55,
+    "Bp": 0.8,
+    "Sg": 0.85,
+    "Al": 1.0,
+    "Su": 0.55,
+    "Rbc": 0.55,
+    "Pc": 0.5,
+    "Pcc": 0.4,
+    "Ba": 0.4,
+    "Bgr": 0.7,
+    "Bu": 0.9,
+    "Sc": 1.0,
+    "Sod": 0.65,
+    "Pot": 0.65,
+    "Hemo": 0.75,
+    "Pcv": 0.7,
+    "Wbcc": 0.4,
+    "Rbcc": 0.55,
+    "Htn": 0.85,
+    "Dm": 0.8,
+    "Cad": 0.45,
+    "Appet": 0.4,
+    "Pe": 0.65,
+    "Ane": 0.7
+  },
+  "feature_tiers": {
+    "A": [
+      "Sc",
+      "Al"
+    ],
+    "B": [
+      "Bu",
+      "Sg",
+      "Htn",
+      "Dm"
+    ],
+    "C": [
+      "Bp",
+      "Bgr",
+      "Hemo",
+      "Pcv",
+      "Ane",
+      "Pe",
+      "Sod",
+      "Pot"
+    ],
+    "D": [
+      "Age",
+      "Su",
+      "Rbc",
+      "Rbcc"
+    ],
+    "E": [
+      "Pc",
+      "Pcc",
+      "Ba",
+      "Wbcc",
+      "Cad",
+      "Appet"
+    ]
+  },
+  "methodological_rule": "Weights are assigned from clinical relevance and evidence hierarchy, not from the observed association with Class in this dataset. Dataset-derived statistics must not be used to set these weights.",
+  "sources": [
+    {
+      "short_name": "KDIGO 2024 CKD Guideline",
+      "citation": "KDIGO CKD Work Group. KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease. Kidney International. 2024;105(4S):S117-S314. doi:10.1016/j.kint.2023.10.018.",
+      "url": "https://kdigo.org/guidelines/ckd-evaluation-and-management/"
+    },
+    {
+      "short_name": "KDIGO 2021 Blood Pressure Guideline",
+      "citation": "Kidney Disease: Improving Global Outcomes (KDIGO) Blood Pressure Work Group. KDIGO 2021 Clinical Practice Guideline for the Management of Blood Pressure in Chronic Kidney Disease. Kidney International. 2021;99(3S):S1-S87. PMID:33637192.",
+      "url": "https://kdigo.org/guidelines/blood-pressure-in-ckd/"
+    },
+    {
+      "short_name": "KDIGO 2026 Anemia Guideline",
+      "citation": "Babitt JL, et al. KDIGO 2026 Clinical Practice Guideline for the Management of Anemia in Chronic Kidney Disease. Kidney International. 2026;109(1S):S1-S99. PMID:41485812.",
+      "url": "https://kdigo.org/guidelines/anemia-in-ckd/"
+    },
+    {
+      "short_name": "CKD Prognosis Consortium laboratory abnormalities",
+      "citation": "Relationship of Estimated GFR and Albuminuria to Concurrent Laboratory Abnormalities: An Individual Participant Data Meta-analysis in a Global Consortium. Kidney-related laboratory abnormalities show strong associations with lower eGFR; the paper also considers albuminuria, hemoglobin, hematocrit, potassium and other laboratory abnormalities.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30348535/"
+    },
+    {
+      "short_name": "CKD risk-factor systematic review",
+      "citation": "Tsai WC, et al. Risk Factors for Development and Progression of Chronic Kidney Disease: A Systematic Review and Exploratory Meta-Analysis. Medicine (Baltimore). 2016;95(11):e3013. doi:10.1097/MD.0000000000003013.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26986114/"
+    },
+    {
+      "short_name": "BD-KDD source article",
+      "citation": "Rahman MT, Akter S, Islam MM, Islam MS. BD-KDD: A real-world clinical dataset for kidney disease diagnosis and healthy classification. Data in Brief. 2026;66:112738. doi:10.1016/j.dib.2026.112738.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13092092/"
+    }
+  ]
+}
