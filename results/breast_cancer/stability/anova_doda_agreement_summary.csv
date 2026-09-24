@@ -1,0 +1,5 @@
+Top_K,Same_Feature_Set_Percentage,Mean_Jaccard_Agreement,Std_Jaccard_Agreement,Mean_Common_Features
+5,12.0,0.7066666666666666,0.11055415967851338,4.12
+10,100.0,1.0,0.0,10.0
+15,100.0,1.0,0.0,15.0
+20,96.0,0.9961904761904762,0.019047619047619042,19.96
