@@ -1,0 +1,110 @@
+Method,Top_K,Feature,Selected_Count,Total_Runs,Selection_Frequency_Percentage
+Boruta,5,area error,75,75,100.0
+Boruta,5,mean area,75,75,100.0
+Boruta,5,mean compactness,75,75,100.0
+Boruta,5,concavity error,72,75,96.0
+Boruta,5,concave points error,45,75,60.0
+Boruta,5,mean concave points,30,75,40.0
+Boruta,5,mean concavity,3,75,4.0
+Boruta,10,area error,75,75,100.0
+Boruta,10,mean area,75,75,100.0
+Boruta,10,mean compactness,75,75,100.0
+Boruta,10,mean concave points,75,75,100.0
+Boruta,10,mean concavity,75,75,100.0
+Boruta,10,mean perimeter,75,75,100.0
+Boruta,10,mean radius,75,75,100.0
+Boruta,10,concavity error,72,75,96.0
+Boruta,10,mean smoothness,66,75,88.0
+Boruta,10,concave points error,45,75,60.0
+Boruta,10,mean texture,30,75,40.0
+Boruta,10,perimeter error,12,75,16.0
+Boruta,15,area error,75,75,100.0
+Boruta,15,mean area,75,75,100.0
+Boruta,15,mean compactness,75,75,100.0
+Boruta,15,mean concave points,75,75,100.0
+Boruta,15,mean concavity,75,75,100.0
+Boruta,15,mean perimeter,75,75,100.0
+Boruta,15,mean radius,75,75,100.0
+Boruta,15,mean texture,75,75,100.0
+Boruta,15,perimeter error,75,75,100.0
+Boruta,15,radius error,75,75,100.0
+Boruta,15,worst area,75,75,100.0
+Boruta,15,worst compactness,75,75,100.0
+Boruta,15,concavity error,72,75,96.0
+Boruta,15,mean smoothness,66,75,88.0
+Boruta,15,concave points error,45,75,60.0
+Boruta,15,worst concave points,30,75,40.0
+Boruta,15,worst concavity,12,75,16.0
+Boruta,20,area error,75,75,100.0
+Boruta,20,mean area,75,75,100.0
+Boruta,20,mean compactness,75,75,100.0
+Boruta,20,mean concave points,75,75,100.0
+Boruta,20,mean concavity,75,75,100.0
+Boruta,20,mean perimeter,75,75,100.0
+Boruta,20,mean radius,75,75,100.0
+Boruta,20,mean texture,75,75,100.0
+Boruta,20,perimeter error,75,75,100.0
+Boruta,20,radius error,75,75,100.0
+Boruta,20,worst area,75,75,100.0
+Boruta,20,worst compactness,75,75,100.0
+Boruta,20,worst concave points,75,75,100.0
+Boruta,20,worst concavity,75,75,100.0
+Boruta,20,worst perimeter,75,75,100.0
+Boruta,20,worst radius,75,75,100.0
+Boruta,20,concavity error,72,75,96.0
+Boruta,20,worst fractal dimension,72,75,96.0
+Boruta,20,mean smoothness,66,75,88.0
+Boruta,20,concave points error,45,75,60.0
+Boruta,20,worst smoothness,33,75,44.0
+Boruta,20,worst symmetry,12,75,16.0
+Boruta + DODA,5,worst area,75,75,100.0
+Boruta + DODA,5,worst concave points,75,75,100.0
+Boruta + DODA,5,worst concavity,75,75,100.0
+Boruta + DODA,5,worst perimeter,75,75,100.0
+Boruta + DODA,5,worst radius,75,75,100.0
+Boruta + DODA,10,mean area,75,75,100.0
+Boruta + DODA,10,mean concave points,75,75,100.0
+Boruta + DODA,10,mean concavity,75,75,100.0
+Boruta + DODA,10,mean perimeter,75,75,100.0
+Boruta + DODA,10,mean radius,75,75,100.0
+Boruta + DODA,10,worst area,75,75,100.0
+Boruta + DODA,10,worst concave points,75,75,100.0
+Boruta + DODA,10,worst concavity,75,75,100.0
+Boruta + DODA,10,worst perimeter,75,75,100.0
+Boruta + DODA,10,worst radius,75,75,100.0
+Boruta + DODA,15,mean area,75,75,100.0
+Boruta + DODA,15,mean compactness,75,75,100.0
+Boruta + DODA,15,mean concave points,75,75,100.0
+Boruta + DODA,15,mean concavity,75,75,100.0
+Boruta + DODA,15,mean perimeter,75,75,100.0
+Boruta + DODA,15,mean radius,75,75,100.0
+Boruta + DODA,15,mean texture,75,75,100.0
+Boruta + DODA,15,worst area,75,75,100.0
+Boruta + DODA,15,worst compactness,75,75,100.0
+Boruta + DODA,15,worst concave points,75,75,100.0
+Boruta + DODA,15,worst concavity,75,75,100.0
+Boruta + DODA,15,worst perimeter,75,75,100.0
+Boruta + DODA,15,worst radius,75,75,100.0
+Boruta + DODA,15,worst symmetry,75,75,100.0
+Boruta + DODA,15,worst texture,75,75,100.0
+Boruta + DODA,20,area error,75,75,100.0
+Boruta + DODA,20,mean area,75,75,100.0
+Boruta + DODA,20,mean compactness,75,75,100.0
+Boruta + DODA,20,mean concave points,75,75,100.0
+Boruta + DODA,20,mean concavity,75,75,100.0
+Boruta + DODA,20,mean perimeter,75,75,100.0
+Boruta + DODA,20,mean radius,75,75,100.0
+Boruta + DODA,20,mean texture,75,75,100.0
+Boruta + DODA,20,perimeter error,75,75,100.0
+Boruta + DODA,20,radius error,75,75,100.0
+Boruta + DODA,20,worst area,75,75,100.0
+Boruta + DODA,20,worst compactness,75,75,100.0
+Boruta + DODA,20,worst concave points,75,75,100.0
+Boruta + DODA,20,worst concavity,75,75,100.0
+Boruta + DODA,20,worst perimeter,75,75,100.0
+Boruta + DODA,20,worst radius,75,75,100.0
+Boruta + DODA,20,worst smoothness,75,75,100.0
+Boruta + DODA,20,worst symmetry,75,75,100.0
+Boruta + DODA,20,worst texture,75,75,100.0
+Boruta + DODA,20,mean smoothness,66,75,88.0
+Boruta + DODA,20,concavity error,9,75,12.0
