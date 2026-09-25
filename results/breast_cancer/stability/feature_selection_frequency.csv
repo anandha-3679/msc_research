@@ -1,0 +1,106 @@
+Method,Top_K,Feature,Selected_Count,Total_Runs,Selection_Frequency_Percentage
+ANOVA,5,mean concave points,75,75,100.0
+ANOVA,5,worst concave points,75,75,100.0
+ANOVA,5,worst perimeter,75,75,100.0
+ANOVA,5,worst radius,75,75,100.0
+ANOVA,5,mean perimeter,69,75,92.0
+ANOVA,5,mean concavity,3,75,4.0
+ANOVA,5,worst area,3,75,4.0
+ANOVA,10,mean area,75,75,100.0
+ANOVA,10,mean concave points,75,75,100.0
+ANOVA,10,mean concavity,75,75,100.0
+ANOVA,10,mean perimeter,75,75,100.0
+ANOVA,10,mean radius,75,75,100.0
+ANOVA,10,worst area,75,75,100.0
+ANOVA,10,worst concave points,75,75,100.0
+ANOVA,10,worst concavity,75,75,100.0
+ANOVA,10,worst perimeter,75,75,100.0
+ANOVA,10,worst radius,75,75,100.0
+ANOVA,15,area error,75,75,100.0
+ANOVA,15,mean area,75,75,100.0
+ANOVA,15,mean compactness,75,75,100.0
+ANOVA,15,mean concave points,75,75,100.0
+ANOVA,15,mean concavity,75,75,100.0
+ANOVA,15,mean perimeter,75,75,100.0
+ANOVA,15,mean radius,75,75,100.0
+ANOVA,15,perimeter error,75,75,100.0
+ANOVA,15,radius error,75,75,100.0
+ANOVA,15,worst area,75,75,100.0
+ANOVA,15,worst compactness,75,75,100.0
+ANOVA,15,worst concave points,75,75,100.0
+ANOVA,15,worst concavity,75,75,100.0
+ANOVA,15,worst perimeter,75,75,100.0
+ANOVA,15,worst radius,75,75,100.0
+ANOVA,20,area error,75,75,100.0
+ANOVA,20,mean area,75,75,100.0
+ANOVA,20,mean compactness,75,75,100.0
+ANOVA,20,mean concave points,75,75,100.0
+ANOVA,20,mean concavity,75,75,100.0
+ANOVA,20,mean perimeter,75,75,100.0
+ANOVA,20,mean radius,75,75,100.0
+ANOVA,20,perimeter error,75,75,100.0
+ANOVA,20,radius error,75,75,100.0
+ANOVA,20,worst area,75,75,100.0
+ANOVA,20,worst compactness,75,75,100.0
+ANOVA,20,worst concave points,75,75,100.0
+ANOVA,20,worst concavity,75,75,100.0
+ANOVA,20,worst perimeter,75,75,100.0
+ANOVA,20,worst radius,75,75,100.0
+ANOVA,20,worst smoothness,75,75,100.0
+ANOVA,20,worst symmetry,75,75,100.0
+ANOVA,20,worst texture,75,75,100.0
+ANOVA,20,concave points error,72,75,96.0
+ANOVA,20,mean texture,72,75,96.0
+ANOVA,20,mean smoothness,6,75,8.0
+DODA,5,mean concave points,75,75,100.0
+DODA,5,worst concave points,75,75,100.0
+DODA,5,worst perimeter,75,75,100.0
+DODA,5,worst radius,75,75,100.0
+DODA,5,worst area,69,75,92.0
+DODA,5,mean perimeter,6,75,8.0
+DODA,10,mean area,75,75,100.0
+DODA,10,mean concave points,75,75,100.0
+DODA,10,mean concavity,75,75,100.0
+DODA,10,mean perimeter,75,75,100.0
+DODA,10,mean radius,75,75,100.0
+DODA,10,worst area,75,75,100.0
+DODA,10,worst concave points,75,75,100.0
+DODA,10,worst concavity,75,75,100.0
+DODA,10,worst perimeter,75,75,100.0
+DODA,10,worst radius,75,75,100.0
+DODA,15,area error,75,75,100.0
+DODA,15,mean area,75,75,100.0
+DODA,15,mean compactness,75,75,100.0
+DODA,15,mean concave points,75,75,100.0
+DODA,15,mean concavity,75,75,100.0
+DODA,15,mean perimeter,75,75,100.0
+DODA,15,mean radius,75,75,100.0
+DODA,15,perimeter error,75,75,100.0
+DODA,15,radius error,75,75,100.0
+DODA,15,worst area,75,75,100.0
+DODA,15,worst compactness,75,75,100.0
+DODA,15,worst concave points,75,75,100.0
+DODA,15,worst concavity,75,75,100.0
+DODA,15,worst perimeter,75,75,100.0
+DODA,15,worst radius,75,75,100.0
+DODA,20,area error,75,75,100.0
+DODA,20,mean area,75,75,100.0
+DODA,20,mean compactness,75,75,100.0
+DODA,20,mean concave points,75,75,100.0
+DODA,20,mean concavity,75,75,100.0
+DODA,20,mean perimeter,75,75,100.0
+DODA,20,mean radius,75,75,100.0
+DODA,20,mean texture,75,75,100.0
+DODA,20,perimeter error,75,75,100.0
+DODA,20,radius error,75,75,100.0
+DODA,20,worst area,75,75,100.0
+DODA,20,worst compactness,75,75,100.0
+DODA,20,worst concave points,75,75,100.0
+DODA,20,worst concavity,75,75,100.0
+DODA,20,worst perimeter,75,75,100.0
+DODA,20,worst radius,75,75,100.0
+DODA,20,worst smoothness,75,75,100.0
+DODA,20,worst symmetry,75,75,100.0
+DODA,20,worst texture,75,75,100.0
+DODA,20,concave points error,72,75,96.0
+DODA,20,mean smoothness,3,75,4.0

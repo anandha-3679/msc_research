@@ -1,0 +1,125 @@
+Method,Top_K,Feature,Selected_Count,Total_Runs,Selection_Frequency_Percentage
+LASSO,5,worst concave points,75,75,100.0
+LASSO,5,worst radius,75,75,100.0
+LASSO,5,worst texture,75,75,100.0
+LASSO,5,mean concave points,69,75,92.0
+LASSO,5,radius error,60,75,80.0
+LASSO,5,worst smoothness,9,75,12.0
+LASSO,5,worst symmetry,9,75,12.0
+LASSO,5,mean concavity,3,75,4.0
+LASSO,10,area error,75,75,100.0
+LASSO,10,mean concave points,75,75,100.0
+LASSO,10,worst concave points,75,75,100.0
+LASSO,10,worst radius,75,75,100.0
+LASSO,10,worst smoothness,75,75,100.0
+LASSO,10,worst texture,75,75,100.0
+LASSO,10,radius error,72,75,96.0
+LASSO,10,worst symmetry,69,75,92.0
+LASSO,10,compactness error,60,75,80.0
+LASSO,10,concave points error,36,75,48.0
+LASSO,10,worst concavity,33,75,44.0
+LASSO,10,worst perimeter,15,75,20.0
+LASSO,10,mean texture,12,75,16.0
+LASSO,10,mean concavity,3,75,4.0
+LASSO,15,area error,75,75,100.0
+LASSO,15,compactness error,75,75,100.0
+LASSO,15,concave points error,75,75,100.0
+LASSO,15,concavity error,75,75,100.0
+LASSO,15,fractal dimension error,75,75,100.0
+LASSO,15,mean area,75,75,100.0
+LASSO,15,mean concave points,75,75,100.0
+LASSO,15,worst concave points,75,75,100.0
+LASSO,15,worst radius,75,75,100.0
+LASSO,15,worst smoothness,75,75,100.0
+LASSO,15,worst texture,75,75,100.0
+LASSO,15,radius error,72,75,96.0
+LASSO,15,worst symmetry,69,75,92.0
+LASSO,15,mean compactness,60,75,80.0
+LASSO,15,mean concavity,39,75,52.0
+LASSO,15,worst concavity,33,75,44.0
+LASSO,15,worst perimeter,15,75,20.0
+LASSO,15,mean texture,12,75,16.0
+LASSO,20,area error,75,75,100.0
+LASSO,20,compactness error,75,75,100.0
+LASSO,20,concave points error,75,75,100.0
+LASSO,20,concavity error,75,75,100.0
+LASSO,20,fractal dimension error,75,75,100.0
+LASSO,20,mean area,75,75,100.0
+LASSO,20,mean compactness,75,75,100.0
+LASSO,20,mean concave points,75,75,100.0
+LASSO,20,mean concavity,75,75,100.0
+LASSO,20,mean fractal dimension,75,75,100.0
+LASSO,20,mean perimeter,75,75,100.0
+LASSO,20,mean radius,75,75,100.0
+LASSO,20,worst concave points,75,75,100.0
+LASSO,20,worst radius,75,75,100.0
+LASSO,20,worst smoothness,75,75,100.0
+LASSO,20,worst texture,75,75,100.0
+LASSO,20,radius error,72,75,96.0
+LASSO,20,worst symmetry,69,75,92.0
+LASSO,20,mean smoothness,60,75,80.0
+LASSO,20,mean symmetry,39,75,52.0
+LASSO,20,worst concavity,33,75,44.0
+LASSO,20,worst perimeter,15,75,20.0
+LASSO,20,mean texture,12,75,16.0
+LASSO + DODA,5,mean concave points,75,75,100.0
+LASSO + DODA,5,worst concave points,75,75,100.0
+LASSO + DODA,5,worst radius,75,75,100.0
+LASSO + DODA,5,worst texture,75,75,100.0
+LASSO + DODA,5,radius error,54,75,72.0
+LASSO + DODA,5,worst perimeter,6,75,8.0
+LASSO + DODA,5,worst smoothness,6,75,8.0
+LASSO + DODA,5,worst symmetry,6,75,8.0
+LASSO + DODA,5,mean concavity,3,75,4.0
+LASSO + DODA,10,mean concave points,75,75,100.0
+LASSO + DODA,10,mean radius,75,75,100.0
+LASSO + DODA,10,worst concave points,75,75,100.0
+LASSO + DODA,10,worst radius,75,75,100.0
+LASSO + DODA,10,worst smoothness,75,75,100.0
+LASSO + DODA,10,worst texture,75,75,100.0
+LASSO + DODA,10,radius error,72,75,96.0
+LASSO + DODA,10,mean texture,69,75,92.0
+LASSO + DODA,10,worst symmetry,69,75,92.0
+LASSO + DODA,10,mean perimeter,39,75,52.0
+LASSO + DODA,10,worst concavity,33,75,44.0
+LASSO + DODA,10,worst perimeter,15,75,20.0
+LASSO + DODA,10,mean concavity,3,75,4.0
+LASSO + DODA,15,mean area,75,75,100.0
+LASSO + DODA,15,mean compactness,75,75,100.0
+LASSO + DODA,15,mean concave points,75,75,100.0
+LASSO + DODA,15,mean perimeter,75,75,100.0
+LASSO + DODA,15,mean radius,75,75,100.0
+LASSO + DODA,15,mean smoothness,75,75,100.0
+LASSO + DODA,15,mean texture,75,75,100.0
+LASSO + DODA,15,worst concave points,75,75,100.0
+LASSO + DODA,15,worst radius,75,75,100.0
+LASSO + DODA,15,worst smoothness,75,75,100.0
+LASSO + DODA,15,worst texture,75,75,100.0
+LASSO + DODA,15,radius error,72,75,96.0
+LASSO + DODA,15,mean concavity,69,75,92.0
+LASSO + DODA,15,worst symmetry,69,75,92.0
+LASSO + DODA,15,mean symmetry,42,75,56.00000000000001
+LASSO + DODA,15,worst concavity,33,75,44.0
+LASSO + DODA,15,worst perimeter,15,75,20.0
+LASSO + DODA,20,mean area,75,75,100.0
+LASSO + DODA,20,mean compactness,75,75,100.0
+LASSO + DODA,20,mean concave points,75,75,100.0
+LASSO + DODA,20,mean concavity,75,75,100.0
+LASSO + DODA,20,mean fractal dimension,75,75,100.0
+LASSO + DODA,20,mean perimeter,75,75,100.0
+LASSO + DODA,20,mean radius,75,75,100.0
+LASSO + DODA,20,mean smoothness,75,75,100.0
+LASSO + DODA,20,mean symmetry,75,75,100.0
+LASSO + DODA,20,mean texture,75,75,100.0
+LASSO + DODA,20,perimeter error,75,75,100.0
+LASSO + DODA,20,radius error,75,75,100.0
+LASSO + DODA,20,texture error,75,75,100.0
+LASSO + DODA,20,worst concave points,75,75,100.0
+LASSO + DODA,20,worst radius,75,75,100.0
+LASSO + DODA,20,worst smoothness,75,75,100.0
+LASSO + DODA,20,worst texture,75,75,100.0
+LASSO + DODA,20,area error,69,75,92.0
+LASSO + DODA,20,worst symmetry,69,75,92.0
+LASSO + DODA,20,smoothness error,39,75,52.0
+LASSO + DODA,20,worst concavity,33,75,44.0
+LASSO + DODA,20,worst perimeter,15,75,20.0
