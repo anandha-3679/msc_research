@@ -31,6 +31,29 @@ VALID_NOTEBOOKS = [
     "heartdisease_boruta",
 ]
 
+# ============================================================
+# CANONICAL PREDICTIVE SOURCE SHEETS
+# ============================================================
+# Each sheet contains the combined 24-row predictive table:
+#   12 Baseline rows + 12 DODA rows.
+#
+# The separate 12-row predictive tables are excluded here
+# because they duplicate these results.
+
+CANONICAL_PREDICTIVE_SHEETS = {
+    "9_diabetes_annova",
+    "28_diabetes_boruta",
+    "79_diabetes_lasso",
+    "96_diabetes_mrmr",
+    "116_diabetes_rf",
+
+    "142_heartdisease_annova",
+    "161_heartdisease_boruta",
+    "210_heartdisease_lasso",
+    "228_heartdisease_mrmr",
+    "249_heartdisease_rf",
+}
+
 
 # ============================================================
 # HELPERS
@@ -113,6 +136,21 @@ def get_fusion(notebook):
         return "Rank Fusion"
 
     return ""
+
+def normalize_predictive_method(method):
+    """
+    Normalize notebook-specific method names.
+
+    Anything containing 'DODA' -> DODA
+    Everything else -> Baseline
+    """
+
+    method = clean(method)
+
+    if "DODA" in method:
+        return "DODA"
+
+    return "Baseline"
 
 
 def get_top_k(df):
@@ -211,6 +249,17 @@ def identify_table(df):
 
         return "Predictive_Summary"
 
+    # --------------------------------------------------------
+    # Baseline selector scores
+    # --------------------------------------------------------
+
+    if {
+        "Feature",
+        "ANOVA Score"
+    }.issubset(cols):
+
+        return "Baseline_Scores"
+
 
     # --------------------------------------------------------
     # Raw math score
@@ -239,6 +288,7 @@ def identify_table(df):
 
     # --------------------------------------------------------
     # DODA final score
+    # Supports both fusion implementations
     # --------------------------------------------------------
 
     if {
@@ -248,6 +298,12 @@ def identify_table(df):
 
         return "Clinical_Final_Score"
 
+    if {
+        "Feature",
+        "Final Rank Fusion Score"
+    }.issubset(cols):
+
+        return "Clinical_Final_Score"
 
     # --------------------------------------------------------
     # DODA rank comparison
@@ -435,6 +491,7 @@ predictive_repeated_rows = []
 predictive_summary_rows = []
 
 clinical_rows = []
+baseline_score_rows = []
 
 feature_set_rows = []
 feature_frequency_rows = []
@@ -501,8 +558,21 @@ for sheet in xls.sheet_names:
     # ========================================================
     # PREDICTIVE MAIN
     # ========================================================
+    #
+    # IMPORTANT:
+    # Only canonical combined 24-row sheets are used.
+    #
+    # Each canonical sheet contains:
+    #   12 Baseline rows
+    #   12 DODA rows
+    #
+    # This prevents duplicate predictive results.
+    #
 
-    if table_type == "Predictive_Results":
+    if (
+        table_type == "Predictive_Results"
+        and sheet in CANONICAL_PREDICTIVE_SHEETS
+    ):
 
         for _, row in df.iterrows():
 
@@ -512,21 +582,37 @@ for sheet in xls.sheet_names:
                 "Selector": selector,
                 "Fusion": fusion,
 
-                "Method": clean(row["Method"]),
+                "Method":
+                    normalize_predictive_method(
+                        row["Method"]
+                    ),
+
                 "Top_K": row["Top-K"],
-                "Model": clean(row["Model"]),
+
+                "Model":
+                    clean(row["Model"]),
+
                 "Selected_Features":
                     clean(row["Selected Features"]),
 
-                "Accuracy": row["Accuracy"],
-                "Precision": row["Precision"],
-                "Recall": row["Recall"],
-                "F1": row["F1 Score"],
-                "ROC_AUC": row["ROC-AUC"],
+                "Accuracy":
+                    row["Accuracy"],
 
-                "Source_Sheet": sheet
+                "Precision":
+                    row["Precision"],
+
+                "Recall":
+                    row["Recall"],
+
+                "F1":
+                    row["F1 Score"],
+
+                "ROC_AUC":
+                    row["ROC-AUC"],
+
+                "Source_Sheet":
+                    sheet
             })
-
 
     # ========================================================
     # PREDICTIVE REPEATED
@@ -542,23 +628,41 @@ for sheet in xls.sheet_names:
                 "Selector": selector,
                 "Fusion": fusion,
 
-                "Run": row["Run"],
-                "Method": clean(row["Method"]),
-                "Top_K": row["Top_K"],
-                "Model": clean(row["Model"]),
+                "Run":
+                    row["Run"],
 
-                "Accuracy": row["Accuracy"],
-                "Precision": row["Precision"],
-                "Recall": row["Recall"],
-                "F1": row["F1"],
-                "ROC_AUC": row["ROC_AUC"],
+                "Method":
+                    normalize_predictive_method(
+                        row["Method"]
+                    ),
+
+                "Top_K":
+                    row["Top_K"],
+
+                "Model":
+                    clean(row["Model"]),
+
+                "Accuracy":
+                    row["Accuracy"],
+
+                "Precision":
+                    row["Precision"],
+
+                "Recall":
+                    row["Recall"],
+
+                "F1":
+                    row["F1"],
+
+                "ROC_AUC":
+                    row["ROC_AUC"],
 
                 "Selected_Features":
                     clean(row["Selected_Features"]),
 
-                "Source_Sheet": sheet
+                "Source_Sheet":
+                    sheet
             })
-
 
     # ========================================================
     # PREDICTIVE SUMMARY
@@ -574,36 +678,78 @@ for sheet in xls.sheet_names:
                 "Selector": selector,
                 "Fusion": fusion,
 
-                "Method": clean(row["Method"]),
-                "Top_K": row["Top_K"],
-                "Model": clean(row["Model"]),
+                "Method":
+                    normalize_predictive_method(
+                        row["Method"]
+                    ),
 
-                "Accuracy_Mean": row["Accuracy_Mean"],
-                "Accuracy_STD": row["Accuracy_STD"],
+                "Top_K":
+                    row["Top_K"],
+
+                "Model":
+                    clean(row["Model"]),
+
+                "Accuracy_Mean":
+                    row["Accuracy_Mean"],
+
+                "Accuracy_STD":
+                    row["Accuracy_STD"],
 
                 "Precision_Mean":
                     row["Precision_Mean"],
+
                 "Precision_STD":
                     row["Precision_STD"],
 
                 "Recall_Mean":
                     row["Recall_Mean"],
+
                 "Recall_STD":
                     row["Recall_STD"],
 
                 "F1_Mean":
                     row["F1_Mean"],
+
                 "F1_STD":
                     row["F1_STD"],
 
                 "ROC_AUC_Mean":
                     row["ROC_AUC_Mean"],
+
                 "ROC_AUC_STD":
                     row["ROC_AUC_STD"],
 
-                "Source_Sheet": sheet
+                "Source_Sheet":
+                    sheet
             })
 
+    # ========================================================
+    # BASELINE SELECTOR SCORES
+    # ========================================================
+
+    elif table_type == "Baseline_Scores":
+
+        for _, row in df.iterrows():
+
+            baseline_score_rows.append({
+
+                "Disease": disease,
+                "Selector": selector,
+                "Fusion": fusion,
+
+                "Feature":
+                    clean(row["Feature"]),
+
+                "Score_Type":
+                    "ANOVA",
+
+                "Baseline_Score":
+                    row["ANOVA Score"],
+
+                "Source_Sheet":
+                    sheet
+
+            })
 
     # ========================================================
     # CLINICAL TABLES
@@ -622,6 +768,7 @@ for sheet in xls.sheet_names:
                 "Disease": disease,
                 "Selector": selector,
                 "Fusion": fusion,
+                "Record_Type": table_type,
                 "Feature": clean(row["Feature"]),
                 "Raw_Math_Score": "",
                 "Normalized_Math_Score": "",
@@ -649,6 +796,10 @@ for sheet in xls.sheet_names:
             if "Final DODA Score" in df.columns:
                 record["Final_DODA_Score"] = \
                     row["Final DODA Score"]
+
+            if "Final Rank Fusion Score" in df.columns:
+                record["Final_DODA_Score"] = \
+                    row["Final Rank Fusion Score"]
 
             if "Math Rank" in df.columns:
                 record["Math_Rank"] = row["Math Rank"]
@@ -997,6 +1148,10 @@ predictive_summary_df = pd.DataFrame(
 
 clinical_df = pd.DataFrame(clinical_rows)
 
+baseline_score_df = pd.DataFrame(
+    baseline_score_rows
+)
+
 feature_set_df = pd.DataFrame(
     feature_set_rows
 )
@@ -1108,6 +1263,12 @@ with pd.ExcelWriter(
         index=False
     )
 
+    baseline_score_df.to_excel(
+        writer,
+        sheet_name="Baseline_Scores",
+        index=False
+    )
+
     feature_set_df.to_excel(
         writer,
         sheet_name="Feature_Sets",
@@ -1194,6 +1355,11 @@ print(
 print(
     f"Clinical Analysis        : "
     f"{len(clinical_df)}"
+)
+
+print(
+    f"Baseline Scores          : "
+    f"{len(baseline_score_df)}"
 )
 
 print(
