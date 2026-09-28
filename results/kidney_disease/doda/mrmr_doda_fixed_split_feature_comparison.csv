@@ -1,0 +1,5 @@
+Top_K,mRMR_Features,DODA_Features,Same_Feature_Set,Overlap_Count,Jaccard,Features_Changed
+5,"Bp, Su, Sg, Ba, Bgr","Bp, Sg, Bu, Sc, Su",False,3,0.42857142857142855,2
+10,"Bp, Su, Sg, Ba, Bgr, Ane, Bu, Pcv, Sc, Rbcc","Bp, Sg, Bu, Sc, Su, Bgr, Ane, Pcv, Al, Ba",False,9,0.8181818181818182,1
+15,"Bp, Su, Sg, Ba, Bgr, Ane, Bu, Pcv, Sc, Rbcc, Dm, Appet, Pcc, Pe, Al","Bp, Sg, Bu, Sc, Su, Bgr, Ane, Pcv, Al, Ba, Dm, Rbcc, Htn, Pe, Pot",False,13,0.7647058823529411,2
+20,"Bp, Su, Sg, Ba, Bgr, Ane, Bu, Pcv, Sc, Rbcc, Dm, Appet, Pcc, Pe, Al, Pot, Wbcc, Htn, Cad, Rbc","Bp, Sg, Bu, Sc, Su, Bgr, Ane, Pcv, Al, Ba, Dm, Rbcc, Htn, Pe, Pot, Appet, Pcc, Hemo, Rbc, Wbcc",False,19,0.9047619047619048,1
