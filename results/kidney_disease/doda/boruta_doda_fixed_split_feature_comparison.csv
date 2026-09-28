@@ -1,0 +1,5 @@
+Top_K,Boruta_Features,DODA_Features,Same_Feature_Set,Overlap_Count,Jaccard,Features_Changed
+5,"Sc, Bp, Pot, Hemo, Wbcc","Sc, Bp, Bu, Hemo, Pot",False,4,0.6666666666666666,1
+10,"Sc, Bp, Pot, Hemo, Wbcc, Age, Bu, Bgr, Pcv, Rbcc","Sc, Bp, Bu, Hemo, Pot, Al, Bgr, Age, Pcv, Sg",False,8,0.6666666666666666,2
+15,"Sc, Bp, Pot, Hemo, Wbcc, Age, Bu, Bgr, Pcv, Rbcc, Sod, Su, Al, Sg, Ane","Sc, Bp, Bu, Hemo, Pot, Al, Bgr, Age, Pcv, Sg, Wbcc, Sod, Rbcc, Htn, Dm",False,13,0.7647058823529411,2
+20,"Sc, Bp, Pot, Hemo, Wbcc, Age, Bu, Bgr, Pcv, Rbcc, Sod, Su, Al, Sg, Ane, Ba, Dm, Htn, Pcc, Appet","Sc, Bp, Bu, Hemo, Pot, Al, Bgr, Age, Pcv, Sg, Wbcc, Sod, Rbcc, Htn, Dm, Su, Ane, Pe, Ba, Rbc",False,18,0.8181818181818182,2
