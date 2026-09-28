@@ -1,1225 +1,771 @@
-from pathlib import Path
-import pandas as pd
+# ============================================================
+# DODA MASTER RESULTS COLLECTOR
+# ============================================================
+# Purpose:
+#   Extract ALL saved HTML tables from executed notebooks and
+#   organize them into research-result categories.
+#
+# Output:
+#   DODA_Master_Results.xlsx
+#
+# Sheets:
+#   01_Prediction_Metrics
+#   02_Feature_Rankings
+#   03_Rank_Changes
+#   04_Stability_Tests
+#   05_Fusion_Results
+#   06_Other_Tests
+#   07_Table_Inventory
+#
+# IMPORTANT:
+#   - No averaging
+#   - No filtering of "important" results
+#   - No numeric cleaning
+#   - No result interpretation
+#   - Original extracted values are preserved
+# ============================================================
+
+
+import json
 import re
+from io import StringIO
+from pathlib import Path
+
+import pandas as pd
 
 
 # ============================================================
-# PATHS
+# 1. PROJECT ROOT
 # ============================================================
 
-ROOT = Path(__file__).resolve().parents[1]
+def find_project_root():
+    """
+    Find project root by looking for the notebooks folder.
+    Works both from a .py file and from a Jupyter notebook.
+    """
 
-INPUT_FILE = ROOT / "DODA_Notebook_Output_Inventory.xlsx"
-OUTPUT_FILE = ROOT / "DODA_Master_Results.xlsx"
+    # If running as a Python script
+    if "__file__" in globals():
+        possible_root = Path(__file__).resolve().parent.parent
+
+        if (possible_root / "notebooks").exists():
+            return possible_root
+
+    # If running inside Jupyter / VS Code notebook
+    current = Path.cwd()
+
+    for path in [current] + list(current.parents):
+        if (path / "notebooks").exists():
+            return path
+
+    # Fallback
+    return current
+
+
+PROJECT_ROOT = find_project_root()
+
+print("Project root:")
+print(PROJECT_ROOT)
 
 
 # ============================================================
-# EXPERIMENTAL NOTEBOOKS ONLY
+# 2. NOTEBOOK DIRECTORIES
 # ============================================================
 
-VALID_NOTEBOOKS = [
-    "diabetes_annova",
-    "diabetes_lasso",
-    "diabetes_mrmr",
-    "diabetes_rf",
-    "diabetes_boruta",
-
-    "heartdisease_annova",
-    "heartdisease_lasso",
-    "heartdisease_mrmr",
-    "heartdisease_rf",
-    "heartdisease_boruta",
+NOTEBOOK_DIRS = [
+    PROJECT_ROOT / "notebooks" / "anandha" / "Diabetes",
+    PROJECT_ROOT / "notebooks" / "anandha" / "heartdisease",
+    PROJECT_ROOT / "notebooks" / "angel" / "breast_cancer",
+    PROJECT_ROOT / "notebooks" / "angel" / "kidney_disease",
 ]
 
-# ============================================================
-# CANONICAL PREDICTIVE SOURCE SHEETS
-# ============================================================
-# Each sheet contains the combined 24-row predictive table:
-#   12 Baseline rows + 12 DODA rows.
-#
-# The separate 12-row predictive tables are excluded here
-# because they duplicate these results.
 
-CANONICAL_PREDICTIVE_SHEETS = {
-    "9_diabetes_annova",
-    "28_diabetes_boruta",
-    "79_diabetes_lasso",
-    "96_diabetes_mrmr",
-    "116_diabetes_rf",
+# ============================================================
+# 3. OUTPUT FILE
+# ============================================================
 
-    "142_heartdisease_annova",
-    "161_heartdisease_boruta",
-    "210_heartdisease_lasso",
-    "228_heartdisease_mrmr",
-    "249_heartdisease_rf",
-}
+OUTPUT_FILE = PROJECT_ROOT / "DODA_Master_Results.xlsx"
 
 
 # ============================================================
-# HELPERS
+# 4. DATASET DETECTION
 # ============================================================
 
-def clean(value):
-    if pd.isna(value):
+def get_dataset_name(path):
+    """
+    Identify dataset from notebook path/name.
+    """
+
+    text = str(path).lower()
+
+    if "diabetes" in text:
+        return "Diabetes"
+
+    if "heartdisease" in text or "heart_disease" in text:
+        return "Heart Disease"
+
+    if "breast_cancer" in text or "breastcancer" in text:
+        return "Breast Cancer"
+
+    if "kidney_disease" in text or "kidney" in text or "ckd" in text:
+        return "CKD"
+
+    return "Unknown"
+
+
+# ============================================================
+# 5. METHOD DETECTION
+# ============================================================
+
+def standardize_method(method):
+    """
+    Standardize method names.
+    """
+
+    if not method:
         return ""
-    return str(value).strip()
 
+    method = str(method).strip().lower()
+
+    mapping = {
+        "anova": "ANOVA",
+        "lasso": "LASSO",
+        "mrmr": "mRMR",
+        "boruta": "Boruta",
+        "doda": "DODA",
+    }
+
+    return mapping.get(method, method.upper())
+
+
+def infer_method_from_notebook(notebook_name):
+    """
+    Infer feature-selection method from notebook filename.
+    """
+
+    name = notebook_name.lower()
+
+    if "anova" in name:
+        return "ANOVA"
+
+    if "lasso" in name:
+        return "LASSO"
+
+    if "mrmr" in name:
+        return "mRMR"
+
+    if "boruta" in name:
+        return "Boruta"
+
+    if "doda" in name:
+        return "DODA"
+
+    return ""
+
+
+# ============================================================
+# 6. FLATTEN MULTI-INDEX COLUMNS
+# ============================================================
 
 def flatten_columns(df):
+    """
+    Convert MultiIndex columns into simple column names.
+    """
+
+    df = df.copy()
 
     if isinstance(df.columns, pd.MultiIndex):
 
+        new_columns = []
+
+        for col in df.columns:
+            parts = []
+
+            for item in col:
+                item = str(item).strip()
+
+                if item and item.lower() != "nan":
+                    parts.append(item)
+
+            new_columns.append("_".join(parts))
+
+        df.columns = new_columns
+
+    else:
         df.columns = [
-            " | ".join(
-                str(x).strip()
-                for x in col
-                if str(x).strip()
-                and str(x).strip().lower() != "nan"
-            )
+            str(col).strip()
             for col in df.columns
         ]
-
-    df.columns = [str(c).strip() for c in df.columns]
 
     return df
 
 
-def get_notebook(source):
+# ============================================================
+# 7. MAKE COLUMN NAMES UNIQUE
+# ============================================================
 
-    source = str(source)
-
-    for notebook in VALID_NOTEBOOKS:
-
-        if notebook in source.lower():
-            return notebook
-
-    return ""
-
-
-def get_disease(notebook):
-
-    if notebook.startswith("diabetes"):
-        return "Diabetes"
-
-    if notebook.startswith("heartdisease"):
-        return "Heart Disease"
-
-    return ""
-
-
-def get_selector(notebook):
-
-    if notebook.endswith("_annova"):
-        return "ANOVA"
-
-    if notebook.endswith("_lasso"):
-        return "LASSO"
-
-    if notebook.endswith("_mrmr"):
-        return "mRMR"
-
-    if notebook.endswith("_rf"):
-        return "Random Forest"
-
-    if notebook.endswith("_boruta"):
-        return "Boruta"
-
-    return ""
-
-
-def get_fusion(notebook):
-
-    if notebook.startswith("diabetes"):
-        return "Hadamard Fusion"
-
-    if notebook.startswith("heartdisease"):
-        return "Rank Fusion"
-
-    return ""
-
-def normalize_predictive_method(method):
+def make_unique_columns(df):
     """
-    Normalize notebook-specific method names.
-
-    Anything containing 'DODA' -> DODA
-    Everything else -> Baseline
+    Prevent duplicate column names after HTML extraction.
     """
 
-    method = clean(method)
+    df = df.copy()
 
-    if "DODA" in method:
-        return "DODA"
+    seen = {}
+    new_columns = []
 
-    return "Baseline"
+    for col in df.columns:
 
+        col = str(col).strip()
 
-def get_top_k(df):
+        if col not in seen:
+            seen[col] = 0
+            new_columns.append(col)
 
-    for col in ["Top-K", "Top_K"]:
-
-        if col in df.columns:
-
-            values = pd.to_numeric(
-                df[col],
-                errors="coerce"
-            ).dropna()
-
-            return values.tolist()
-
-    return []
-
-
-def remove_metadata_columns(df):
-
-    metadata = [
-        "_Notebook",
-        "_Cell",
-        "_Output",
-        "_Table",
-        "Unnamed: 0"
-    ]
-
-    return df.drop(
-        columns=[
-            c for c in metadata
-            if c in df.columns
-        ],
-        errors="ignore"
-    )
-
-
-# ============================================================
-# TABLE IDENTIFICATION
-# ============================================================
-
-def identify_table(df):
-
-    cols = set(df.columns)
-
-    # --------------------------------------------------------
-    # Predictive main table
-    # --------------------------------------------------------
-
-    if {
-        "Method",
-        "Top-K",
-        "Model",
-        "Selected Features",
-        "Accuracy",
-        "Precision",
-        "Recall",
-        "F1 Score",
-        "ROC-AUC"
-    }.issubset(cols):
-
-        return "Predictive_Results"
-
-
-    # --------------------------------------------------------
-    # Repeated predictive results
-    # --------------------------------------------------------
-
-    if {
-        "Run",
-        "Method",
-        "Top_K",
-        "Model",
-        "Accuracy",
-        "Precision",
-        "Recall",
-        "F1",
-        "ROC_AUC",
-        "Selected_Features"
-    }.issubset(cols):
-
-        return "Predictive_Repeated"
-
-
-    # --------------------------------------------------------
-    # Predictive mean/std
-    # --------------------------------------------------------
-
-    if {
-        "Method",
-        "Top_K",
-        "Model",
-        "Accuracy_Mean",
-        "Accuracy_STD"
-    }.issubset(cols):
-
-        return "Predictive_Summary"
-
-    # --------------------------------------------------------
-    # Baseline selector scores
-    # --------------------------------------------------------
-
-    if {
-        "Feature",
-        "ANOVA Score"
-    }.issubset(cols):
-
-        return "Baseline_Scores"
-
-
-    # --------------------------------------------------------
-    # Raw math score
-    # --------------------------------------------------------
-
-    if {
-        "Feature",
-        "Raw Math Score",
-        "Normalized Math Score"
-    }.issubset(cols):
-
-        return "Clinical_Raw_Math"
-
-
-    # --------------------------------------------------------
-    # Clinical weight
-    # --------------------------------------------------------
-
-    if {
-        "Feature",
-        "Clinical Weight"
-    }.issubset(cols):
-
-        return "Clinical_Weights"
-
-
-    # --------------------------------------------------------
-    # DODA final score
-    # Supports both fusion implementations
-    # --------------------------------------------------------
-
-    if {
-        "Feature",
-        "Final DODA Score"
-    }.issubset(cols):
-
-        return "Clinical_Final_Score"
-
-    if {
-        "Feature",
-        "Final Rank Fusion Score"
-    }.issubset(cols):
-
-        return "Clinical_Final_Score"
-
-    # --------------------------------------------------------
-    # DODA rank comparison
-    # --------------------------------------------------------
-
-    if {
-        "Feature",
-        "Math Rank",
-        "Normalized Math Score",
-        "Clinical Rank",
-        "Clinical Weight",
-        "Final Rank",
-        "Final Score",
-        "Rank Change"
-    }.issubset(cols):
-
-        return "Clinical_Ranking"
-
-
-    # --------------------------------------------------------
-    # Feature set by run
-    # --------------------------------------------------------
-
-    if {
-        "Run",
-        "Method",
-        "Top_K",
-        "Feature_Set"
-    }.issubset(cols):
-
-        return "Feature_Set"
-
-
-    # --------------------------------------------------------
-    # Feature frequency
-    # --------------------------------------------------------
-
-    if {
-        "Method",
-        "Top_K",
-        "Feature",
-        "Selected_Count",
-        "Total_Runs",
-        "Selection_Frequency_Percentage"
-    }.issubset(cols):
-
-        return "Feature_Frequency"
-
-
-    # --------------------------------------------------------
-    # Feature count
-    # --------------------------------------------------------
-
-    if {
-        "Method",
-        "Top_K",
-        "Feature_Count"
-    }.issubset(cols):
-
-        return "Feature_Count"
-
-
-    # --------------------------------------------------------
-    # Jaccard pairwise
-    # --------------------------------------------------------
-
-    if {
-        "Method",
-        "Top_K",
-        "Run_A",
-        "Run_B",
-        "Intersection",
-        "Union",
-        "Jaccard_Similarity"
-    }.issubset(cols):
-
-        return "Jaccard_Pairwise"
-
-
-    # --------------------------------------------------------
-    # Jaccard summary
-    # --------------------------------------------------------
-
-    if {
-        "Method",
-        "Top_K",
-        "Mean_Jaccard"
-    }.issubset(cols):
-
-        return "Jaccard_Summary"
-
-
-    # --------------------------------------------------------
-    # Kuncheva pairwise
-    # --------------------------------------------------------
-
-    if {
-        "Method",
-        "Top_K",
-        "Run_A",
-        "Run_B",
-        "Intersection",
-        "Kuncheva_Index"
-    }.issubset(cols):
-
-        return "Kuncheva_Pairwise"
-
-
-    # --------------------------------------------------------
-    # Kuncheva summary
-    # --------------------------------------------------------
-
-    if {
-        "Method",
-        "Top_K",
-        "Mean_Kuncheva"
-    }.issubset(cols):
-
-        return "Kuncheva_Summary"
-
-
-    # --------------------------------------------------------
-    # DODA agreement
-    # --------------------------------------------------------
-
-    agreement_markers = [
-        "ANOVA_Features",
-        "LASSO_Features",
-        "mRMR_Features",
-        "RF_Features",
-        "Boruta_Features"
-    ]
-
-    if (
-        "DODA_Features" in cols
-        and any(x in cols for x in agreement_markers)
-    ):
-
-        return "Agreement_Pairwise"
-
-
-    # --------------------------------------------------------
-    # Aggregate agreement
-    # --------------------------------------------------------
-
-    if (
-        "Top_K" in cols
-        and (
-            "Mean_Agreement" in cols
-            or "Mean_Jaccard_Agreement" in cols
-        )
-    ):
-
-        return "Agreement_Summary"
-
-
-    return "Other"
-
-
-# ============================================================
-# MAIN
-# ============================================================
-
-print("=" * 70)
-print("STEP 4 — BUILDING MASTER RESULTS")
-print("=" * 70)
-
-
-if not INPUT_FILE.exists():
-
-    raise FileNotFoundError(
-        f"Input file not found:\n{INPUT_FILE}"
-    )
-
-
-xls = pd.ExcelFile(INPUT_FILE)
-
-
-# ============================================================
-# STORAGE
-# ============================================================
-
-predictive_rows = []
-predictive_repeated_rows = []
-predictive_summary_rows = []
-
-clinical_rows = []
-baseline_score_rows = []
-
-feature_set_rows = []
-feature_frequency_rows = []
-feature_count_rows = []
-
-jaccard_pairwise_rows = []
-jaccard_summary_rows = []
-
-kuncheva_pairwise_rows = []
-kuncheva_summary_rows = []
-
-agreement_pairwise_rows = []
-agreement_summary_rows = []
-
-source_rows = []
-
-
-# ============================================================
-# PROCESS TABLES
-# ============================================================
-
-for sheet in xls.sheet_names:
-
-    if sheet.lower() == "inventory":
-        continue
-
-    notebook = get_notebook(sheet)
-
-    if not notebook:
-        continue
-
-    # IMPORTANT:
-    # Ignore EDA completely because no EDA notebook is in
-    # VALID_NOTEBOOKS.
-
-    df = pd.read_excel(
-        INPUT_FILE,
-        sheet_name=sheet
-    )
-
-    df = flatten_columns(df)
-
-    table_type = identify_table(df)
-
-    df = remove_metadata_columns(df)
-
-    disease = get_disease(notebook)
-    selector = get_selector(notebook)
-    fusion = get_fusion(notebook)
-
-    source_rows.append({
-        "Source_Sheet": sheet,
-        "Notebook": notebook,
-        "Disease": disease,
-        "Selector": selector,
-        "Fusion": fusion,
-        "Table_Type": table_type,
-        "Rows": len(df),
-        "Columns": len(df.columns),
-        "Column_Names": " | ".join(df.columns)
-    })
-
-
-    # ========================================================
-    # PREDICTIVE MAIN
-    # ========================================================
-    #
-    # IMPORTANT:
-    # Only canonical combined 24-row sheets are used.
-    #
-    # Each canonical sheet contains:
-    #   12 Baseline rows
-    #   12 DODA rows
-    #
-    # This prevents duplicate predictive results.
-    #
-
-    if (
-        table_type == "Predictive_Results"
-        and sheet in CANONICAL_PREDICTIVE_SHEETS
-    ):
-
-        for _, row in df.iterrows():
-
-            predictive_rows.append({
-
-                "Disease": disease,
-                "Selector": selector,
-                "Fusion": fusion,
-
-                "Method":
-                    normalize_predictive_method(
-                        row["Method"]
-                    ),
-
-                "Top_K": row["Top-K"],
-
-                "Model":
-                    clean(row["Model"]),
-
-                "Selected_Features":
-                    clean(row["Selected Features"]),
-
-                "Accuracy":
-                    row["Accuracy"],
-
-                "Precision":
-                    row["Precision"],
-
-                "Recall":
-                    row["Recall"],
-
-                "F1":
-                    row["F1 Score"],
-
-                "ROC_AUC":
-                    row["ROC-AUC"],
-
-                "Source_Sheet":
-                    sheet
-            })
-
-    # ========================================================
-    # PREDICTIVE REPEATED
-    # ========================================================
-
-    elif table_type == "Predictive_Repeated":
-
-        for _, row in df.iterrows():
-
-            predictive_repeated_rows.append({
-
-                "Disease": disease,
-                "Selector": selector,
-                "Fusion": fusion,
-
-                "Run":
-                    row["Run"],
-
-                "Method":
-                    normalize_predictive_method(
-                        row["Method"]
-                    ),
-
-                "Top_K":
-                    row["Top_K"],
-
-                "Model":
-                    clean(row["Model"]),
-
-                "Accuracy":
-                    row["Accuracy"],
-
-                "Precision":
-                    row["Precision"],
-
-                "Recall":
-                    row["Recall"],
-
-                "F1":
-                    row["F1"],
-
-                "ROC_AUC":
-                    row["ROC_AUC"],
-
-                "Selected_Features":
-                    clean(row["Selected_Features"]),
-
-                "Source_Sheet":
-                    sheet
-            })
-
-    # ========================================================
-    # PREDICTIVE SUMMARY
-    # ========================================================
-
-    elif table_type == "Predictive_Summary":
-
-        for _, row in df.iterrows():
-
-            predictive_summary_rows.append({
-
-                "Disease": disease,
-                "Selector": selector,
-                "Fusion": fusion,
-
-                "Method":
-                    normalize_predictive_method(
-                        row["Method"]
-                    ),
-
-                "Top_K":
-                    row["Top_K"],
-
-                "Model":
-                    clean(row["Model"]),
-
-                "Accuracy_Mean":
-                    row["Accuracy_Mean"],
-
-                "Accuracy_STD":
-                    row["Accuracy_STD"],
-
-                "Precision_Mean":
-                    row["Precision_Mean"],
-
-                "Precision_STD":
-                    row["Precision_STD"],
-
-                "Recall_Mean":
-                    row["Recall_Mean"],
-
-                "Recall_STD":
-                    row["Recall_STD"],
-
-                "F1_Mean":
-                    row["F1_Mean"],
-
-                "F1_STD":
-                    row["F1_STD"],
-
-                "ROC_AUC_Mean":
-                    row["ROC_AUC_Mean"],
-
-                "ROC_AUC_STD":
-                    row["ROC_AUC_STD"],
-
-                "Source_Sheet":
-                    sheet
-            })
-
-    # ========================================================
-    # BASELINE SELECTOR SCORES
-    # ========================================================
-
-    elif table_type == "Baseline_Scores":
-
-        for _, row in df.iterrows():
-
-            baseline_score_rows.append({
-
-                "Disease": disease,
-                "Selector": selector,
-                "Fusion": fusion,
-
-                "Feature":
-                    clean(row["Feature"]),
-
-                "Score_Type":
-                    "ANOVA",
-
-                "Baseline_Score":
-                    row["ANOVA Score"],
-
-                "Source_Sheet":
-                    sheet
-
-            })
-
-    # ========================================================
-    # CLINICAL TABLES
-    # ========================================================
-
-    elif table_type in [
-        "Clinical_Raw_Math",
-        "Clinical_Weights",
-        "Clinical_Final_Score",
-        "Clinical_Ranking"
-    ]:
-
-        for _, row in df.iterrows():
-
-            record = {
-                "Disease": disease,
-                "Selector": selector,
-                "Fusion": fusion,
-                "Record_Type": table_type,
-                "Feature": clean(row["Feature"]),
-                "Raw_Math_Score": "",
-                "Normalized_Math_Score": "",
-                "Clinical_Weight": "",
-                "Final_DODA_Score": "",
-                "Math_Rank": "",
-                "Clinical_Rank": "",
-                "Final_Rank": "",
-                "Final_Score": "",
-                "Rank_Change": "",
-                "Source_Sheet": sheet
-            }
-
-            if "Raw Math Score" in df.columns:
-                record["Raw_Math_Score"] = row["Raw Math Score"]
-
-            if "Normalized Math Score" in df.columns:
-                record["Normalized_Math_Score"] = \
-                    row["Normalized Math Score"]
-
-            if "Clinical Weight" in df.columns:
-                record["Clinical_Weight"] = \
-                    row["Clinical Weight"]
-
-            if "Final DODA Score" in df.columns:
-                record["Final_DODA_Score"] = \
-                    row["Final DODA Score"]
-
-            if "Final Rank Fusion Score" in df.columns:
-                record["Final_DODA_Score"] = \
-                    row["Final Rank Fusion Score"]
-
-            if "Math Rank" in df.columns:
-                record["Math_Rank"] = row["Math Rank"]
-
-            if "Clinical Rank" in df.columns:
-                record["Clinical_Rank"] = row["Clinical Rank"]
-
-            if "Final Rank" in df.columns:
-                record["Final_Rank"] = row["Final Rank"]
-
-            if "Final Score" in df.columns:
-                record["Final_Score"] = row["Final Score"]
-
-            if "Rank Change" in df.columns:
-                record["Rank_Change"] = row["Rank Change"]
-
-            clinical_rows.append(record)
-
-
-    # ========================================================
-    # FEATURE SET
-    # ========================================================
-
-    elif table_type == "Feature_Set":
-
-        for _, row in df.iterrows():
-
-            feature_set_rows.append({
-
-                "Disease": disease,
-                "Selector": selector,
-                "Fusion": fusion,
-
-                "Run": row["Run"],
-                "Method": clean(row["Method"]),
-                "Top_K": row["Top_K"],
-                "Feature_Set": clean(row["Feature_Set"]),
-
-                "Source_Sheet": sheet
-            })
-
-
-    # ========================================================
-    # FEATURE FREQUENCY
-    # ========================================================
-
-    elif table_type == "Feature_Frequency":
-
-        for _, row in df.iterrows():
-
-            feature_frequency_rows.append({
-
-                "Disease": disease,
-                "Selector": selector,
-                "Fusion": fusion,
-
-                "Method": clean(row["Method"]),
-                "Top_K": row["Top_K"],
-                "Feature": clean(row["Feature"]),
-                "Selected_Count": row["Selected_Count"],
-                "Total_Runs": row["Total_Runs"],
-                "Selection_Frequency_Percentage":
-                    row["Selection_Frequency_Percentage"],
-
-                "Source_Sheet": sheet
-            })
-
-
-    # ========================================================
-    # FEATURE COUNT
-    # ========================================================
-
-    elif table_type == "Feature_Count":
-
-        for _, row in df.iterrows():
-
-            feature_count_rows.append({
-
-                "Disease": disease,
-                "Selector": selector,
-                "Fusion": fusion,
-
-                "Method": clean(row["Method"]),
-                "Top_K": row["Top_K"],
-                "Feature_Count": row["Feature_Count"],
-
-                "Source_Sheet": sheet
-            })
-
-
-    # ========================================================
-    # JACCARD PAIRWISE
-    # ========================================================
-
-    elif table_type == "Jaccard_Pairwise":
-
-        for _, row in df.iterrows():
-
-            jaccard_pairwise_rows.append({
-
-                "Disease": disease,
-                "Selector": selector,
-                "Fusion": fusion,
-
-                "Method": clean(row["Method"]),
-                "Top_K": row["Top_K"],
-                "Run_A": row["Run_A"],
-                "Run_B": row["Run_B"],
-                "Intersection": row["Intersection"],
-                "Union": row["Union"],
-                "Jaccard_Similarity":
-                    row["Jaccard_Similarity"],
-
-                "Source_Sheet": sheet
-            })
-
-
-    # ========================================================
-    # JACCARD SUMMARY
-    # ========================================================
-
-    elif table_type == "Jaccard_Summary":
-
-        for _, row in df.iterrows():
-
-            jaccard_summary_rows.append({
-
-                "Disease": disease,
-                "Selector": selector,
-                "Fusion": fusion,
-
-                "Method": clean(row["Method"]),
-                "Top_K": row["Top_K"],
-
-                "Mean_Jaccard":
-                    row["Mean_Jaccard"],
-                "Std_Jaccard":
-                    row["Std_Jaccard"],
-
-                "Min_Jaccard":
-                    row.get("Minimum_Jaccard",
-                            row.get("Min_Jaccard", "")),
-
-                "Max_Jaccard":
-                    row.get("Maximum_Jaccard",
-                            row.get("Max_Jaccard", "")),
-
-                "Source_Sheet": sheet
-            })
-
-
-    # ========================================================
-    # KUNCHEVA PAIRWISE
-    # ========================================================
-
-    elif table_type == "Kuncheva_Pairwise":
-
-        for _, row in df.iterrows():
-
-            kuncheva_pairwise_rows.append({
-
-                "Disease": disease,
-                "Selector": selector,
-                "Fusion": fusion,
-
-                "Method": clean(row["Method"]),
-                "Top_K": row["Top_K"],
-                "Run_A": row["Run_A"],
-                "Run_B": row["Run_B"],
-                "Intersection": row["Intersection"],
-                "Kuncheva_Index":
-                    row["Kuncheva_Index"],
-
-                "Source_Sheet": sheet
-            })
-
-
-    # ========================================================
-    # KUNCHEVA SUMMARY
-    # ========================================================
-
-    elif table_type == "Kuncheva_Summary":
-
-        for _, row in df.iterrows():
-
-            kuncheva_summary_rows.append({
-
-                "Disease": disease,
-                "Selector": selector,
-                "Fusion": fusion,
-
-                "Method": clean(row["Method"]),
-                "Top_K": row["Top_K"],
-
-                "Mean_Kuncheva":
-                    row["Mean_Kuncheva"],
-                "Std_Kuncheva":
-                    row["Std_Kuncheva"],
-
-                "Min_Kuncheva":
-                    row.get("Minimum_Kuncheva",
-                            row.get("Min_Kuncheva", "")),
-
-                "Max_Kuncheva":
-                    row.get("Maximum_Kuncheva",
-                            row.get("Max_Kuncheva", "")),
-
-                "Source_Sheet": sheet
-            })
-
-
-    # ========================================================
-    # AGREEMENT PAIRWISE
-    # ========================================================
-
-    elif table_type == "Agreement_Pairwise":
-
-        for _, row in df.iterrows():
-
-            baseline_feature_col = next(
-                (
-                    c for c in [
-                        "ANOVA_Features",
-                        "LASSO_Features",
-                        "mRMR_Features",
-                        "RF_Features",
-                        "Boruta_Features"
-                    ]
-                    if c in df.columns
-                ),
-                ""
+        else:
+            seen[col] += 1
+            new_columns.append(
+                f"{col}_{seen[col]}"
             )
 
-            agreement_pairwise_rows.append({
+    df.columns = new_columns
 
-                "Disease": disease,
-                "Selector": selector,
-                "Fusion": fusion,
-
-                "Run": row.get("Run", ""),
-                "Top_K": row["Top_K"],
-
-                "Baseline_Features":
-                    clean(row[baseline_feature_col])
-                    if baseline_feature_col else "",
-
-                "DODA_Features":
-                    clean(row["DODA_Features"]),
-
-                "Common_Features":
-                    clean(row.get(
-                        "Common_Features",
-                        row.get("Common_Feature_Count", "")
-                    )),
-
-                "Common_Feature_Count":
-                    row.get("Common_Feature_Count", ""),
-
-                "Same_Feature_Set":
-                    row.get("Same_Feature_Set", ""),
-
-                "Jaccard_Agreement":
-                    row.get("Jaccard_Agreement", ""),
-
-                "Source_Sheet": sheet
-            })
-
-
-    # ========================================================
-    # AGREEMENT SUMMARY
-    # ========================================================
-
-    elif table_type == "Agreement_Summary":
-
-        for _, row in df.iterrows():
-
-            agreement_summary_rows.append({
-
-                "Disease": disease,
-                "Selector": selector,
-                "Fusion": fusion,
-
-                "Top_K": row["Top_K"],
-
-                "Same_Feature_Set_Percentage":
-                    row.get(
-                        "Same_Feature_Set_Percentage",
-                        ""
-                    ),
-
-                "Mean_Agreement":
-                    row.get(
-                        "Mean_Agreement",
-                        row.get(
-                            "Mean_Jaccard_Agreement",
-                            ""
-                        )
-                    ),
-
-                "Std_Agreement":
-                    row.get(
-                        "Std_Agreement",
-                        row.get(
-                            "Std_Jaccard_Agreement",
-                            ""
-                        )
-                    ),
-
-                "Mean_Common_Features":
-                    row.get(
-                        "Mean_Common_Features",
-                        ""
-                    ),
-
-                "Min_Agreement":
-                    row.get(
-                        "Min_Agreement",
-                        ""
-                    ),
-
-                "Max_Agreement":
-                    row.get(
-                        "Max_Agreement",
-                        ""
-                    ),
-
-                "Source_Sheet": sheet
-            })
+    return df
 
 
 # ============================================================
-# DATAFRAMES
+# 8. CLASSIFY RESULT TYPE
 # ============================================================
 
-source_df = pd.DataFrame(source_rows)
+def classify_result(table_text, columns):
+    """
+    Classify a table into one of the master-result categories.
 
-predictive_df = pd.DataFrame(predictive_rows)
+    This classification is ONLY for organization.
+    It does NOT determine whether a result is important.
+    """
 
-predictive_repeated_df = pd.DataFrame(
-    predictive_repeated_rows
+    text = (
+        str(table_text) + " " +
+        " ".join(map(str, columns))
+    ).lower()
+
+    # --------------------------------------------------------
+    # Rank changes
+    # --------------------------------------------------------
+
+    rank_change_terms = [
+        "rank change",
+        "rank_change",
+        "rankchange",
+        "final rank",
+        "math rank",
+        "clinical rank",
+        "ranking change",
+        "change in rank",
+    ]
+
+    if any(term in text for term in rank_change_terms):
+        return "Rank Changes"
+
+
+    # --------------------------------------------------------
+    # Stability tests
+    # --------------------------------------------------------
+
+    stability_terms = [
+        "jaccard",
+        "kuncheva",
+        "stability",
+        "selection frequency",
+        "selection_frequency",
+        "overlap",
+        "consistency",
+    ]
+
+    if any(term in text for term in stability_terms):
+        return "Stability Tests"
+
+
+    # --------------------------------------------------------
+    # Fusion
+    # --------------------------------------------------------
+
+    fusion_terms = [
+        "fusion",
+        "rankfusion",
+        "rank fusion",
+        "hadamard",
+        "fused score",
+        "fusion score",
+        "math score",
+        "mathematical score",
+        "clinical weight",
+        "clinical score",
+    ]
+
+    if any(term in text for term in fusion_terms):
+        return "Fusion Results"
+
+
+    # --------------------------------------------------------
+    # Prediction metrics
+    # --------------------------------------------------------
+
+    prediction_terms = [
+        "accuracy",
+        "precision",
+        "recall",
+        "f1",
+        "f1-score",
+        "f1 score",
+        "roc-auc",
+        "roc_auc",
+        "auc",
+        "specificity",
+        "sensitivity",
+        "balanced accuracy",
+        "log loss",
+    ]
+
+    if any(term in text for term in prediction_terms):
+        return "Prediction Metrics"
+
+
+    # --------------------------------------------------------
+    # Feature rankings / selection
+    # --------------------------------------------------------
+
+    feature_terms = [
+        "feature",
+        "features",
+        "selected",
+        "selection",
+        "rank",
+        "ranking",
+        "top-k",
+        "top k",
+        "importance",
+        "coefficient",
+        "boruta",
+        "mrmr",
+        "anova",
+        "lasso",
+    ]
+
+    if any(term in text for term in feature_terms):
+        return "Feature Rankings"
+
+
+    # --------------------------------------------------------
+    # Everything else
+    # --------------------------------------------------------
+
+    return "Other Tests"
+
+
+# ============================================================
+# 9. EXTRACT TABLES FROM ONE NOTEBOOK
+# ============================================================
+
+def extract_tables_from_notebook(notebook_path):
+
+    results = []
+
+    try:
+
+        with open(
+            notebook_path,
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            notebook = json.load(f)
+
+    except Exception as e:
+
+        print(
+            f"Could not read notebook: "
+            f"{notebook_path.name}"
+        )
+
+        print("Error:", e)
+
+        return results
+
+
+    dataset = get_dataset_name(notebook_path)
+
+    method = infer_method_from_notebook(
+        notebook_path.name
+    )
+
+
+    # --------------------------------------------------------
+    # Loop through notebook cells
+    # --------------------------------------------------------
+
+    for cell_number, cell in enumerate(
+        notebook.get("cells", [])
+    ):
+
+        if cell.get("cell_type") != "code":
+            continue
+
+
+        outputs = cell.get("outputs", [])
+
+
+        # ----------------------------------------------------
+        # Loop through outputs
+        # ----------------------------------------------------
+
+        for output_number, output in enumerate(outputs):
+
+            data = output.get("data", {})
+
+            html_data = data.get("text/html")
+
+
+            if not html_data:
+                continue
+
+
+            # ------------------------------------------------
+            # HTML may be list of strings
+            # ------------------------------------------------
+
+            if isinstance(html_data, list):
+
+                html_text = "".join(html_data)
+
+            else:
+
+                html_text = str(html_data)
+
+
+            # ------------------------------------------------
+            # Read every HTML table
+            # ------------------------------------------------
+
+            try:
+
+                tables = pd.read_html(
+                    StringIO(html_text)
+                )
+
+            except Exception:
+
+                continue
+
+
+            # ------------------------------------------------
+            # Store every table
+            # ------------------------------------------------
+
+            for table_number, df in enumerate(tables):
+
+                df = flatten_columns(df)
+
+                df = make_unique_columns(df)
+
+                result_type = classify_result(
+                    html_text,
+                    df.columns
+                )
+
+
+                table_id = (
+                    f"T{len(results) + 1:04d}"
+                )
+
+
+                results.append({
+                    "Table_ID": table_id,
+                    "Dataset": dataset,
+                    "Notebook": notebook_path.name,
+                    "Method": method,
+                    "Result_Type": result_type,
+                    "Cell": cell_number,
+                    "Output": output_number,
+                    "Table": table_number,
+                    "DataFrame": df,
+                })
+
+
+    return results
+
+
+# ============================================================
+# 10. FIND NOTEBOOKS
+# ============================================================
+
+notebook_files = []
+
+for directory in NOTEBOOK_DIRS:
+
+    if not directory.exists():
+
+        print(
+            f"WARNING: directory not found:\n"
+            f"{directory}"
+        )
+
+        continue
+
+
+    files = sorted(
+        directory.glob("*.ipynb")
+    )
+
+    notebook_files.extend(files)
+
+
+print()
+print(
+    f"Found {len(notebook_files)} notebooks."
 )
+print()
 
-predictive_summary_df = pd.DataFrame(
-    predictive_summary_rows
-)
 
-clinical_df = pd.DataFrame(clinical_rows)
+# ============================================================
+# 11. EXTRACT EVERYTHING
+# ============================================================
 
-baseline_score_df = pd.DataFrame(
-    baseline_score_rows
-)
+all_tables = []
 
-feature_set_df = pd.DataFrame(
-    feature_set_rows
-)
+for notebook_path in notebook_files:
 
-feature_frequency_df = pd.DataFrame(
-    feature_frequency_rows
-)
+    print(
+        f"Processing: "
+        f"{notebook_path.name}"
+    )
 
-feature_count_df = pd.DataFrame(
-    feature_count_rows
-)
+    tables = extract_tables_from_notebook(
+        notebook_path
+    )
 
-jaccard_pairwise_df = pd.DataFrame(
-    jaccard_pairwise_rows
-)
+    print(
+        f"  Tables found: {len(tables)}"
+    )
 
-jaccard_summary_df = pd.DataFrame(
-    jaccard_summary_rows
-)
+    all_tables.extend(tables)
 
-kuncheva_pairwise_df = pd.DataFrame(
-    kuncheva_pairwise_rows
-)
 
-kuncheva_summary_df = pd.DataFrame(
-    kuncheva_summary_rows
-)
-
-agreement_pairwise_df = pd.DataFrame(
-    agreement_pairwise_rows
-)
-
-agreement_summary_df = pd.DataFrame(
-    agreement_summary_rows
+print()
+print(
+    f"TOTAL TABLES EXTRACTED: "
+    f"{len(all_tables)}"
 )
 
 
 # ============================================================
-# EXPERIMENT SETUP
+# 12. PREPARE CATEGORY DATA
 # ============================================================
 
-experiment_rows = []
+categories = {
+    "Prediction Metrics": [],
+    "Feature Rankings": [],
+    "Rank Changes": [],
+    "Stability Tests": [],
+    "Fusion Results": [],
+    "Other Tests": [],
+}
 
-for notebook in VALID_NOTEBOOKS:
 
-    experiment_rows.append({
+# ============================================================
+# 13. BUILD MASTER ROWS
+# ============================================================
 
-        "Disease": get_disease(notebook),
+inventory_rows = []
+
+# These are reserved for our master metadata
+MASTER_COLUMNS = [
+    "Table_ID",
+    "Dataset",
+    "Notebook",
+    "Method",
+    "Result_Type",
+    "Cell",
+    "Output",
+    "Table",
+]
+
+
+for item in all_tables:
+
+    table_id = item["Table_ID"]
+
+    dataset = item["Dataset"]
+
+    notebook = item["Notebook"]
+
+    method = item["Method"]
+
+    result_type = item["Result_Type"]
+
+    cell = item["Cell"]
+
+    output = item["Output"]
+
+    table_number = item["Table"]
+
+    df = item["DataFrame"].copy()
+
+
+    # --------------------------------------------------------
+    # INVENTORY
+    # --------------------------------------------------------
+
+    inventory_rows.append({
+
+        "Table_ID": table_id,
+
+        "Dataset": dataset,
 
         "Notebook": notebook,
 
-        "Selector": get_selector(notebook),
+        "Method": method,
 
-        "Fusion": get_fusion(notebook),
+        "Result_Type": result_type,
 
-        "Dataset_Type":
-            "Survey" if notebook.startswith("diabetes")
-            else "Clinical",
+        "Cell": cell,
 
-        "Status": "Included"
+        "Output": output,
 
+        "Table": table_number,
+
+        "Rows": len(df),
+
+        "Columns": len(df.columns),
+
+        "Column_Names":
+            " | ".join(
+                map(str, df.columns)
+            ),
     })
 
-experiment_df = pd.DataFrame(experiment_rows)
+
+    # --------------------------------------------------------
+    # HANDLE COLUMN NAME CONFLICTS
+    #
+    # If the original notebook table already has columns such
+    # as "Method", "Dataset", "Rank", etc., preserve them.
+    #
+    # Only columns reserved for master metadata are renamed.
+    # --------------------------------------------------------
+
+    rename_map = {}
+
+    for col in df.columns:
+
+        col_str = str(col).strip()
+
+        if col_str in MASTER_COLUMNS:
+
+            rename_map[col] = f"Source_{col_str}"
+
+
+    if rename_map:
+
+        df = df.rename(
+            columns=rename_map
+        )
+
+
+    # --------------------------------------------------------
+    # ADD MASTER METADATA
+    # --------------------------------------------------------
+
+    df.insert(
+        0,
+        "Table_ID",
+        table_id
+    )
+
+    df.insert(
+        1,
+        "Dataset",
+        dataset
+    )
+
+    df.insert(
+        2,
+        "Notebook",
+        notebook
+    )
+
+    df.insert(
+        3,
+        "Method",
+        method
+    )
+
+    df.insert(
+        4,
+        "Result_Type",
+        result_type
+    )
+
+    df.insert(
+        5,
+        "Cell",
+        cell
+    )
+
+    df.insert(
+        6,
+        "Output",
+        output
+    )
+
+    df.insert(
+        7,
+        "Table",
+        table_number
+    )
+
+
+    # --------------------------------------------------------
+    # ADD TO CATEGORY
+    # --------------------------------------------------------
+
+    categories[result_type].append(
+        df
+    )
+
+# ============================================================
+# 14. COMBINE TABLES WITHIN EACH CATEGORY
+# ============================================================
+
+combined_categories = {}
+
+for category, dataframes in categories.items():
+
+    if dataframes:
+
+        combined_categories[category] = pd.concat(
+            dataframes,
+            ignore_index=True,
+            sort=False
+        )
+
+    else:
+
+        combined_categories[category] = pd.DataFrame()
 
 
 # ============================================================
-# WRITE MASTER WORKBOOK
+# 15. TABLE INVENTORY
+# ============================================================
+
+inventory_df = pd.DataFrame(
+    inventory_rows
+)
+
+
+# ============================================================
+# 16. WRITE MASTER EXCEL FILE
 # ============================================================
 
 with pd.ExcelWriter(
@@ -1227,190 +773,123 @@ with pd.ExcelWriter(
     engine="openpyxl"
 ) as writer:
 
-    experiment_df.to_excel(
+    # --------------------------------------------------------
+    # Prediction
+    # --------------------------------------------------------
+
+    combined_categories[
+        "Prediction Metrics"
+    ].to_excel(
         writer,
-        sheet_name="Experiment_Setup",
+        sheet_name="01_Prediction_Metrics",
         index=False
     )
 
-    source_df.to_excel(
+
+    # --------------------------------------------------------
+    # Feature rankings
+    # --------------------------------------------------------
+
+    combined_categories[
+        "Feature Rankings"
+    ].to_excel(
         writer,
-        sheet_name="Source_Index",
+        sheet_name="02_Feature_Rankings",
         index=False
     )
 
-    predictive_df.to_excel(
+
+    # --------------------------------------------------------
+    # Rank changes
+    # --------------------------------------------------------
+
+    combined_categories[
+        "Rank Changes"
+    ].to_excel(
         writer,
-        sheet_name="Predictive_Results",
+        sheet_name="03_Rank_Changes",
         index=False
     )
 
-    predictive_repeated_df.to_excel(
+
+    # --------------------------------------------------------
+    # Stability
+    # --------------------------------------------------------
+
+    combined_categories[
+        "Stability Tests"
+    ].to_excel(
         writer,
-        sheet_name="Predictive_Repeated",
+        sheet_name="04_Stability_Tests",
         index=False
     )
 
-    predictive_summary_df.to_excel(
+
+    # --------------------------------------------------------
+    # Fusion
+    # --------------------------------------------------------
+
+    combined_categories[
+        "Fusion Results"
+    ].to_excel(
         writer,
-        sheet_name="Predictive_Summary",
+        sheet_name="05_Fusion_Results",
         index=False
     )
 
-    clinical_df.to_excel(
+
+    # --------------------------------------------------------
+    # Other tests
+    # --------------------------------------------------------
+
+    combined_categories[
+        "Other Tests"
+    ].to_excel(
         writer,
-        sheet_name="Clinical_Feature_Analysis",
+        sheet_name="06_Other_Tests",
         index=False
     )
 
-    baseline_score_df.to_excel(
-        writer,
-        sheet_name="Baseline_Scores",
-        index=False
-    )
 
-    feature_set_df.to_excel(
-        writer,
-        sheet_name="Feature_Sets",
-        index=False
-    )
+    # --------------------------------------------------------
+    # Inventory
+    # --------------------------------------------------------
 
-    feature_frequency_df.to_excel(
+    inventory_df.to_excel(
         writer,
-        sheet_name="Feature_Frequency",
-        index=False
-    )
-
-    feature_count_df.to_excel(
-        writer,
-        sheet_name="Feature_Count",
-        index=False
-    )
-
-    jaccard_pairwise_df.to_excel(
-        writer,
-        sheet_name="Jaccard_Pairwise",
-        index=False
-    )
-
-    jaccard_summary_df.to_excel(
-        writer,
-        sheet_name="Jaccard_Summary",
-        index=False
-    )
-
-    kuncheva_pairwise_df.to_excel(
-        writer,
-        sheet_name="Kuncheva_Pairwise",
-        index=False
-    )
-
-    kuncheva_summary_df.to_excel(
-        writer,
-        sheet_name="Kuncheva_Summary",
-        index=False
-    )
-
-    agreement_pairwise_df.to_excel(
-        writer,
-        sheet_name="Agreement_Pairwise",
-        index=False
-    )
-
-    agreement_summary_df.to_excel(
-        writer,
-        sheet_name="Agreement_Summary",
+        sheet_name="07_Table_Inventory",
         index=False
     )
 
 
 # ============================================================
-# REPORT
+# 17. SUMMARY
 # ============================================================
 
-print("\n" + "=" * 70)
-print("STEP 4 COMPLETE")
-print("=" * 70)
+print()
+print("=" * 60)
+print("MASTER RESULTS CREATED")
+print("=" * 60)
 
-print(f"\nCreated:")
+print()
+print("Output:")
 print(OUTPUT_FILE)
 
-print("\nRecord counts:")
+print()
+print("Tables by category:")
 
+for category, df in combined_categories.items():
+
+    print(
+        f"  {category:<25} "
+        f"{len(df):>6} rows"
+    )
+
+print()
 print(
-    f"Predictive Results       : "
-    f"{len(predictive_df)}"
+    f"Total source tables: "
+    f"{len(all_tables)}"
 )
 
-print(
-    f"Predictive Repeated      : "
-    f"{len(predictive_repeated_df)}"
-)
-
-print(
-    f"Predictive Summary       : "
-    f"{len(predictive_summary_df)}"
-)
-
-print(
-    f"Clinical Analysis        : "
-    f"{len(clinical_df)}"
-)
-
-print(
-    f"Baseline Scores          : "
-    f"{len(baseline_score_df)}"
-)
-
-print(
-    f"Feature Sets             : "
-    f"{len(feature_set_df)}"
-)
-
-print(
-    f"Feature Frequency        : "
-    f"{len(feature_frequency_df)}"
-)
-
-print(
-    f"Jaccard Pairwise         : "
-    f"{len(jaccard_pairwise_df)}"
-)
-
-print(
-    f"Jaccard Summary          : "
-    f"{len(jaccard_summary_df)}"
-)
-
-print(
-    f"Kuncheva Pairwise        : "
-    f"{len(kuncheva_pairwise_df)}"
-)
-
-print(
-    f"Kuncheva Summary         : "
-    f"{len(kuncheva_summary_df)}"
-)
-
-print(
-    f"Agreement Pairwise       : "
-    f"{len(agreement_pairwise_df)}"
-)
-
-print(
-    f"Agreement Summary        : "
-    f"{len(agreement_summary_df)}"
-)
-
-print("\nSource classification:")
-
-print(
-    source_df[
-        [
-            "Source_Sheet",
-            "Table_Type",
-            "Rows",
-            "Columns"
-        ]
-    ].to_string(index=False)
-)
+print()
+print("Done.")
